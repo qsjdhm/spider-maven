@@ -1,19 +1,19 @@
-package com.spider.entity.houses;
+package com.spider.entity;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by zhangyan on 17/7/19.
  * 房产商原型
  */
-public class TReb {
+public class Reb {
 
-    public TReb () {
+    public Reb() {
 
     }
 
-    private UUID rebId = null;  // 房产商ID
-    private String rebName = null;  // 房产商名称
+    private String name = null;  // 房产商名称
     private String fdcUrl = null;  // 政府网URL
     private String qualificationLevel = null;  // 资质等级
     private String qualificationId = null;  // 资质编号
@@ -24,22 +24,14 @@ public class TReb {
     private String registeredCapital = null;  // 注册资金
     private String type = null;  // 企业类型
     private String introduction = null;  // 企业简介
+    private List<Houses> housesList = new ArrayList<Houses>();  // 下级楼盘列表
 
-
-    public UUID getRebId() {
-        return rebId;
+    public String getName() {
+        return name;
     }
 
-    public void setRebId(UUID rebId) {
-        this.rebId = rebId;
-    }
-
-    public String getRebName() {
-        return rebName;
-    }
-
-    public void setRebName(String rebName) {
-        this.rebName = rebName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFdcUrl() {
@@ -120,5 +112,13 @@ public class TReb {
 
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public List<Houses> getHousesList() {
+        return housesList;
+    }
+
+    public void setHousesList(List<Houses> housesList) {
+        this.housesList = housesList;
     }
 }
