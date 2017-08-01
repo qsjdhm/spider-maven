@@ -19,6 +19,8 @@ public interface IRebService {
      */
     public List<Reb> getListByPage(int number) throws IOException;
 
+    public List<Reb> getListByUrl(String url) throws IOException;
+
     public Reb getDetailsByElement(Element tr) throws IOException;
 
     public Reb getDetailsByUrl(String url) throws IOException;

@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         RebAction rebAction = new RebAction();
-        rebAction.syncAllList();
+        rebAction.syncPageListByUrl("http://www.jnfdc.gov.cn/kfqy/index_2.shtml");
 
     }
 }

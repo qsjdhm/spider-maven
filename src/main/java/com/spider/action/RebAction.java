@@ -50,6 +50,20 @@ public class RebAction {
      */
     public void syncPageListByUrl(String url) {
 
+        List<Reb> rebList = new ArrayList<Reb>();
+
+        RebServiceImpl rebService = new RebServiceImpl();
+        try {
+            rebList = rebService.getListByUrl(url);
+
+            for(Reb reb : rebList) {
+                System.out.println(reb.getName());
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -58,6 +72,16 @@ public class RebAction {
      */
     public void syncDetailsByUrl(String url) {
 
+        Reb reb = new Reb();
+
+        RebServiceImpl rebService = new RebServiceImpl();
+        try {
+            reb = rebService.getDetailsByUrl(url);
+            System.out.println(reb.getName());
+        } catch (IOException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
     }
 
 }
