@@ -87,7 +87,7 @@ public class RebServiceImpl implements IRebService {
         try {
             reb = getDetailsByUrl(fdcUrl);
         } catch (IOException e) {
-            LogFile.writerLogFile(Constant.SPIDER_LOG_PATH, Constant.SUCCESS, "[根据url]:"+fdcUrl+"抓取[房产商]["+name+"]详细数据完成!");
+
         }
 
 
@@ -134,7 +134,6 @@ public class RebServiceImpl implements IRebService {
         type = trs.eq(6).select("td").eq(1).text();  // 企业类型
         introduction = trs.eq(7).select("td").eq(1).text();  // 企业简介
 
-        LogFile.writerLogFile(Constant.SPIDER_LOG_PATH, Constant.SUCCESS, "[根据url]:"+url+"抓取[房产商]["+name+"]详细数据完成!");
 
         Reb reb = new Reb();
         reb.setName(name);

@@ -14,8 +14,8 @@ public class Houses {
 
     }
 
-    private String housesName = null;  // 楼盘名称
-    private String fdcHousesName = null;  // 政府网查询时用的楼盘名称
+    private String name = null;  // 楼盘名称
+    private String fdcName = null;  // 政府网查询时用的楼盘名称
     private String sfwUrl = null;  // 搜房网URL
     private String cover = null;  // 封面
     private String address = null;  // 地址
@@ -24,5 +24,75 @@ public class Houses {
     private String pRebName = null;  // 所属房产商名称
     private List<Floor> floorList = new ArrayList<Floor>();  // 下级地块列表
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFdcName() {
+        return fdcName;
+    }
+
+    public void setFdcName(String fdcName) {
+        this.fdcName = fdcName;
+    }
+
+    public String getSfwUrl() {
+        return sfwUrl;
+    }
+
+    public void setSfwUrl(String sfwUrl) {
+        this.sfwUrl = sfwUrl;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAveragePrice() {
+        return averagePrice;
+    }
+
+    public void setAveragePrice(String averagePrice) {
+        this.averagePrice = averagePrice;
+    }
+
+    public String getOpeningDate() {
+        return openingDate;
+    }
+
+    public void setOpeningDate(String openingDate) {
+        this.openingDate = openingDate;
+    }
+
+    public String getpRebName() {
+        return pRebName;
+    }
+
+    public void setpRebName(String pRebName) {
+        this.pRebName = pRebName;
+    }
+
+    public List<Floor> getFloorList() {
+        return floorList;
+    }
+
+    public void setFloorList(List<Floor> floorList) {
+        this.floorList = floorList;
+    }
 }
