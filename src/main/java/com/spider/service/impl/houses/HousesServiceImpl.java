@@ -26,86 +26,46 @@ public class HousesServiceImpl implements IHousesService {
     @Override
     public List<Houses> getListByPage(int housesNumber) throws IOException {
 
-
-
-        List<Houses> housesList = new ArrayList<Houses>();
         String url = "http://newhouse.jn.fang.com/house/dianshang/b9"+housesNumber;
 
+        List<Houses> housesList = new ArrayList<Houses>();
 
-        Document pageDoc = Jsoup.connect(url).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
-        Elements lis = pageDoc.select("#newhouse_loupai_list li");
+        Document pageDoc = null;
 
-        for (Element li : lis) {
-            Houses houses = getDetailsByElement(li);
-            String fdcName = houses.getFdcName();
+        try {
+            pageDoc = Jsoup.connect(url).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
 
-            // 下潜地块数据查询
-            System.out.println(fdcName);
+            Elements lis = pageDoc.select("#newhouse_loupai_list li");
 
+            for (Element li : lis) {
+                Houses houses = new Houses();
 
-
-
-
-
-
-            // 楼盘下的地块列表
-            List<Floor> allFloorList = new ArrayList<Floor>();
-
-            int floorNumber = 1;
-            boolean isError = false;
-
-            do {
-
-                List<Floor> pageFloorList = new ArrayList<Floor>();
                 try {
-                    pageFloorList = floorService.getListByPage(fdcName, floorNumber);
+                    // 下潜地块数据查询
+                    houses = getDetailsByElement(li);
+                    String fdcName = houses.getFdcName();
+                    System.out.println(fdcName);
+                    List<Floor> housesFloorList = floorService.getListByHousesName(fdcName);
+                    houses.setFloorList(housesFloorList);
 
-                    for(Floor floor : pageFloorList) {
-                        System.out.println("action----------");
-                        System.out.println(floor.getName());
-                    }
+                    housesList.add(houses);
                 } catch (IOException e) {
-
-                    // 超时： java.net.SocketTimeoutException:Read timed out异常。
-                    // 连接失败：java.net.SocketTimeoutException: connect timed out
-                    if (e.toString().indexOf("Read timed out") > -1) {
-                        // 判断e是超时异常，把isError设为true，表示这页数据为0是由超时异常导致的
-                        isError = true;
-                    }
-
-                    System.out.println();
-                    System.out.println("获取"+fdcName+"的地块列表"+floorNumber+"失败："+e);
-                    e.printStackTrace();
+                    String name = li.select(".nlc_details .nlcd_name a").text();
+                    System.out.println("获取楼盘["+name+"]数据出错");
                 }
+            }
 
-                // 如果有3页数据，获取第1页数据超时异常数据为0，就可以正常的接着获取第2页
-                // 如果只有1页数据，并且是超时异常，接着获取第2页，如果第2页还是没有数据并且超时异常
-                // 接着获取第3页，如果获取到数据为0并且没有异常就会跳出dowhile循环
-
-
-
-                // 如果获取的这页数据为空，并且不是经过了异常，就表示全部数据获取完成或此楼盘没有地块列表
-                if (pageFloorList.size()==0 && !isError) {
-                    floorNumber = 0;
-                } else {
-                    // 页数累加获取下页地块列表
-                    floorNumber++;
-                    // 把每页的地块数据添加到全部的地块列表中
-                    for(Floor floor : pageFloorList) {
-                        allFloorList.add(floor);
-                    }
-                }
-            } while (floorNumber > 0);
-
-
-
-            housesList.add(houses);
+        } catch (IOException e) {
+            System.out.println("获取楼盘第"+housesNumber+"页["+url+"]失败："+e);
+            e.printStackTrace();
         }
+
+
+
 
 
         return housesList;
     }
-
 
 
     public Houses getDetailsByElement(Element li) throws IOException {
@@ -115,14 +75,7 @@ public class HousesServiceImpl implements IHousesService {
         String cover = li.select(".nlc_img img").eq(1).attr("src");
         String address = li.select(".nlc_details .address a").text();
 
-        Houses houses = new Houses();
-
-        try {
-            houses = getDetailsByUrl(sfwUrl);
-        } catch (IOException e) {
-
-        }
-
+        Houses houses = getDetailsByUrl(sfwUrl);
         houses.setName(name);
         houses.setCover(cover);
         houses.setAddress(address);

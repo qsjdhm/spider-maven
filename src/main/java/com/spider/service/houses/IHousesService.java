@@ -1,5 +1,6 @@
 package com.spider.service.houses;
 
+import com.spider.entity.Floor;
 import com.spider.entity.Houses;
 import com.spider.entity.Reb;
 import org.jsoup.nodes.Element;
@@ -19,8 +20,6 @@ public interface IHousesService {
      */
     public List<Houses> getListByPage(int number) throws IOException;
 
-//    public List<Houses> getListByUrl(String url) throws IOException;
-//
     public Houses getDetailsByElement(Element li) throws IOException;
 
     public Houses getDetailsByUrl(String url) throws IOException;

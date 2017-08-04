@@ -1,6 +1,7 @@
 package com.spider.service.impl.houses;
 
 import com.spider.entity.Floor;
+import com.spider.entity.Houses;
 import com.spider.service.houses.IFloorService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,6 +14,57 @@ import java.util.List;
 
 
 public class FloorServiceImpl implements IFloorService {
+
+
+    // 根据楼盘名称获取地块列表
+    public List<Floor> getListByHousesName(String fdcName) {
+        // 楼盘下的地块列表
+        List<Floor> allFloorList = new ArrayList<Floor>();
+
+        int number = 1;
+        boolean isError = false;
+
+        do {
+
+            List<Floor> pageFloorList = new ArrayList<Floor>();
+            try {
+                pageFloorList = getListByPage(fdcName, number);
+
+                for(Floor floor : pageFloorList) {
+                    System.out.println("地块列表----------");
+                    System.out.println(floor.getName());
+                }
+            } catch (IOException e) {
+                if (e.toString().indexOf("Read timed out") > -1) {
+                    // 判断e是超时异常，把isError设为true，表示这页数据为0是由超时异常导致的
+                    isError = true;
+                }
+                System.out.println("获取"+fdcName+"的地块列表第"+number+"页失败："+e);
+                e.printStackTrace();
+            }
+
+            // 如果有3页数据，获取第1页数据超时异常数据为0，就可以正常的接着获取第2页
+            // 如果只有1页数据，并且是超时异常，接着获取第2页，如果第2页还是没有数据并且超时异常
+            // 接着获取第3页，如果获取到数据为0并且没有异常就会跳出dowhile循环
+
+
+            // 如果获取的这页数据为空，并且不是经过了异常，就表示全部数据获取完成或此楼盘没有地块列表
+            if (pageFloorList.size()==0 && !isError) {
+                number = 0;
+            } else {
+                // 页数累加获取下页地块列表
+                number++;
+                // 把每页的地块数据添加到全部的地块列表中
+                for(Floor floor : pageFloorList) {
+                    allFloorList.add(floor);
+                }
+            }
+        } while (number > 0);
+
+        return allFloorList;
+    }
+
+
 
     public List<Floor> getListByPage(String fdcName, int number) throws IOException {
 
@@ -28,19 +80,27 @@ public class FloorServiceImpl implements IFloorService {
             // 只获取有效数据的值
             if (tr.select("td").size() > 1) {
 
+                Floor floor = new Floor();
 
-                Floor floor = getDetailsByElement(tr);
-                floor.setpHousesName(fdcName);
+                try {
 
-                // 抓取详细信息
-                floorList.add(floor);
+                    floor = getDetailsByElement(tr);
+                    floor.setpHousesName(fdcName);
+
+                    // 抓取详细信息
+                    floorList.add(floor);
+                } catch (IOException e) {
+                    Elements tds = tr.select("td");
+                    String floorName = tds.eq(1).attr("title");  // 地块名称
+                    String fdcUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
+
+                    System.out.println("获取地块["+floorName+"]["+fdcUrl+"]数据出错");
+                }
             }
         }
 
         return floorList;
     }
-
-    //    public List<Houses> getListByUrl(String url) throws IOException;
 
     public Floor getDetailsByElement(Element tr) throws IOException {
 
@@ -94,4 +154,7 @@ public class FloorServiceImpl implements IFloorService {
 
         return floor;
     }
+
+
+
 }
