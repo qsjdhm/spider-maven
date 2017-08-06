@@ -44,7 +44,8 @@ public class HousesServiceImpl implements IHousesService {
                     // 下潜地块数据查询
                     houses = getDetailsByElement(li);
                     String fdcName = houses.getFdcName();
-                    System.out.println(fdcName);
+                    System.out.println("楼盘名称："+fdcName);
+                    System.out.println("楼盘url："+url);
                     List<Floor> housesFloorList = floorService.getListByHousesName(fdcName);
                     houses.setFloorList(housesFloorList);
 
@@ -59,10 +60,6 @@ public class HousesServiceImpl implements IHousesService {
             System.out.println("获取楼盘第"+housesNumber+"页["+url+"]失败："+e);
             e.printStackTrace();
         }
-
-
-
-
 
         return housesList;
     }

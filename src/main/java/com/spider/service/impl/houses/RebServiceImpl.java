@@ -110,30 +110,19 @@ public class RebServiceImpl implements IRebService {
     @Override
     public Reb getDetailsByUrl(String url) throws IOException {
 
-        String name = null;
-        String qualificationLevel = null;
-        String qualificationId = null;
-        String LegalPerson = null;
-        String address = null;
-        String phone = null;
-        String mail = null;
-        String registeredCapital = null;
-        String type = null;
-        String introduction = null;
-
         Document detailedDoc = Jsoup.connect(url).timeout(5000).get();  // 承载抓取到的房产商详细数据
         Elements trs = detailedDoc.select(".message_table tr");
 
-        name = trs.eq(0).select("td").eq(1).text();
-        qualificationLevel = trs.eq(2).select("td").eq(1).text();
-        LegalPerson = trs.eq(5).select("td").eq(3).text();
-        address = trs.eq(1).select("td").eq(1).text();
-        phone = trs.eq(3).select("td").eq(3).text();
-        mail = trs.eq(4).select("td").eq(3).text();  // 企业邮箱
-        registeredCapital = trs.eq(5).select("td").eq(1).text();  // 注册资金
-        type = trs.eq(6).select("td").eq(1).text();  // 企业类型
-        introduction = trs.eq(7).select("td").eq(1).text();  // 企业简介
-
+        String name = trs.eq(0).select("td").eq(1).text();
+        String qualificationLevel = trs.eq(2).select("td").eq(1).text();
+        String qualificationId = null;
+        String LegalPerson = trs.eq(5).select("td").eq(3).text();
+        String address = trs.eq(1).select("td").eq(1).text();
+        String phone = trs.eq(3).select("td").eq(3).text();
+        String mail = trs.eq(4).select("td").eq(3).text();  // 企业邮箱
+        String registeredCapital = trs.eq(5).select("td").eq(1).text();  // 注册资金
+        String type = trs.eq(6).select("td").eq(1).text();  // 企业类型
+        String introduction = trs.eq(7).select("td").eq(1).text();  // 企业简介
 
         Reb reb = new Reb();
         reb.setName(name);

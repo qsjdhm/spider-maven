@@ -12,7 +12,7 @@ public class Plots {
 
     }
 
-    private String plotsName = null;  // 单元楼名称
+    private String name = null;  // 单元楼名称
     private String fdcUrl = null;  // 单元楼页面政府网URL
     private String area = null;  // 建筑面积
     private String decoration = null;  // 装修标准
@@ -25,5 +25,99 @@ public class Plots {
     private String pFloorId = null;  // 所属地块ID
     private String pFloorName = null;  // 所属地块名称
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFdcUrl() {
+        return fdcUrl;
+    }
+
+    public void setFdcUrl(String fdcUrl) {
+        this.fdcUrl = fdcUrl;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getDecoration() {
+        return decoration;
+    }
+
+    public void setDecoration(String decoration) {
+        this.decoration = decoration;
+    }
+
+    public String getUse() {
+        return use;
+    }
+
+    public void setUse(String use) {
+        this.use = use;
+    }
+
+    public String getMortgage() {
+        return mortgage;
+    }
+
+    public void setMortgage(String mortgage) {
+        this.mortgage = mortgage;
+    }
+
+    public String getSalePermit() {
+        return salePermit;
+    }
+
+    public void setSalePermit(String salePermit) {
+        this.salePermit = salePermit;
+    }
+
+    public String getLandUseCertificate() {
+        return landUseCertificate;
+    }
+
+    public void setLandUseCertificate(String landUseCertificate) {
+        this.landUseCertificate = landUseCertificate;
+    }
+
+    public String getPlanningPermit() {
+        return planningPermit;
+    }
+
+    public void setPlanningPermit(String planningPermit) {
+        this.planningPermit = planningPermit;
+    }
+
+    public String getConstructionPermit() {
+        return constructionPermit;
+    }
+
+    public void setConstructionPermit(String constructionPermit) {
+        this.constructionPermit = constructionPermit;
+    }
+
+    public String getpFloorId() {
+        return pFloorId;
+    }
+
+    public void setpFloorId(String pFloorId) {
+        this.pFloorId = pFloorId;
+    }
+
+    public String getpFloorName() {
+        return pFloorName;
+    }
+
+    public void setpFloorName(String pFloorName) {
+        this.pFloorName = pFloorName;
+    }
 }

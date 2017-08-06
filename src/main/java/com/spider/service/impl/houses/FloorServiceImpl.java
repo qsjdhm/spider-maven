@@ -2,6 +2,7 @@ package com.spider.service.impl.houses;
 
 import com.spider.entity.Floor;
 import com.spider.entity.Houses;
+import com.spider.entity.Plots;
 import com.spider.service.houses.IFloorService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,6 +15,8 @@ import java.util.List;
 
 
 public class FloorServiceImpl implements IFloorService {
+
+    PlotsServiceImpl plotsService = new PlotsServiceImpl();
 
 
     // 根据楼盘名称获取地块列表
@@ -30,8 +33,8 @@ public class FloorServiceImpl implements IFloorService {
             try {
                 pageFloorList = getListByPage(fdcName, number);
 
+                System.out.println(fdcName+"的地块列表----------");
                 for(Floor floor : pageFloorList) {
-                    System.out.println("地块列表----------");
                     System.out.println(floor.getName());
                 }
             } catch (IOException e) {
@@ -86,8 +89,16 @@ public class FloorServiceImpl implements IFloorService {
 
                     floor = getDetailsByElement(tr);
                     floor.setpHousesName(fdcName);
+                    List<Plots> floorPlotsList = plotsService.getListByUrl(floor.getFdcUrl());
 
-                    // 抓取详细信息
+                    System.out.println(floor.getName()+"的单元楼-------------");
+                    for (Plots floorPlots : floorPlotsList) {
+                        floorPlots.setpFloorName(floor.getName());
+                        System.out.println(floorPlots.getName());
+                    }
+
+                    floor.setPlotsList(plotsService.getListByUrl(floor.getFdcUrl()));
+
                     floorList.add(floor);
                 } catch (IOException e) {
                     Elements tds = tr.select("td");
@@ -122,24 +133,17 @@ public class FloorServiceImpl implements IFloorService {
 
     public Floor getDetailsByUrl(String url) throws IOException {
 
-        String name = null;  // 地块名称
-        String fdcUrl = url;  // 地块详情页面政府网URL
-        String canSold = null;  // 可售套数
-        String address = null;  // 项目地址
-        String county = null;  // 所在区县
-        String scale = null;  // 项目规模
-        String totalPlotsNumber = null;  // 总栋数
-        String property = null;  // 物业公司
-
         Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
         Elements trs = detailedDoc.select(".message_table tr");
 
-        name = trs.eq(1).select("td").eq(1).text();
-        address = trs.eq(1).select("td").eq(3).text();
-        county = trs.eq(2).select("td").eq(3).text();
-        scale = trs.eq(3).select("td").eq(1).text();
-        totalPlotsNumber = trs.eq(3).select("td").eq(3).text();
-        property = trs.eq(5).select("td").eq(1).text();
+        String name = trs.eq(1).select("td").eq(1).text();
+        String fdcUrl = url;  // 地块详情页面政府网URL
+        String canSold = null;  // 可售套数
+        String address = trs.eq(1).select("td").eq(3).text();
+        String county = trs.eq(2).select("td").eq(3).text();
+        String scale = trs.eq(3).select("td").eq(1).text();
+        String totalPlotsNumber = trs.eq(3).select("td").eq(3).text();
+        String property = trs.eq(5).select("td").eq(1).text();
 
 
         Floor floor = new Floor();
