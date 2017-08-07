@@ -2,6 +2,7 @@ package com.spider.service.houses;
 
 import com.spider.entity.Floor;
 import com.spider.entity.Houses;
+import com.spider.entity.Plots;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
@@ -14,12 +15,13 @@ import java.util.List;
 public interface IFloorService {
 
 
-    public List<Floor> getListByHousesName(String fdcName);
-
     public List<Floor> getListByPage(String fdcName, int number) throws IOException;
 
     public Floor getDetailsByElement(Element tr) throws IOException;
 
     public Floor getDetailsByUrl(String url) throws IOException;
 
+
+
+    public List<Plots> getPlotsListByBaseUrl(String baseUrl) throws IOException;
 }

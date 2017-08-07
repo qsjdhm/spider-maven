@@ -14,7 +14,6 @@ import java.util.List;
 public interface IPlotsService {
 
 
-    public List<Plots> getListByUrl(String baseUrl) throws IOException;
 
     public List<Plots> getListByPage(String url, int number) throws IOException;
 

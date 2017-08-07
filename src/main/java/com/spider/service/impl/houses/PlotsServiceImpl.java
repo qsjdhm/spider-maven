@@ -17,49 +17,6 @@ public class PlotsServiceImpl implements IPlotsService {
 
 
 
-    public List<Plots> getListByUrl(String baseUrl) throws IOException {
-
-        List<Plots> allPlotsList = new ArrayList<Plots>();
-
-        int number = 1;
-        boolean isError = false;
-
-        do {
-
-            List<Plots> pagePlotsList = new ArrayList<Plots>();
-            try {
-                pagePlotsList = getListByPage(baseUrl, number);
-            } catch (IOException e) {
-                if (e.toString().indexOf("Read timed out") > -1) {
-                    // 判断e是超时异常，把isError设为true，表示这页数据为0是由超时异常导致的
-                    isError = true;
-                }
-
-                throw new IOException(e);
-            }
-
-            // 如果有3页数据，获取第1页数据超时异常数据为0，就可以正常的接着获取第2页
-            // 如果只有1页数据，并且是超时异常，接着获取第2页，如果第2页还是没有数据并且超时异常
-            // 接着获取第3页，如果获取到数据为0并且没有异常就会跳出dowhile循环
-
-
-            // 如果获取的这页数据为空，并且不是经过了异常，就表示全部数据获取完成或此楼盘没有地块列表
-            if (pagePlotsList.size()==0 && !isError) {
-                number = 0;
-            } else {
-                // 页数累加获取下页地块列表
-                number++;
-                // 把每页的地块数据添加到全部的地块列表中
-                for(Plots plots : pagePlotsList) {
-                    allPlotsList.add(plots);
-                }
-            }
-        } while (number > 0);
-
-        return allPlotsList;
-    }
-
-
 
     public List<Plots> getListByPage(String url, int number) throws IOException {
 

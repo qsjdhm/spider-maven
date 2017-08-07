@@ -14,13 +14,12 @@ import java.util.List;
  */
 public interface IHousesService {
 
-    /**
-     * 返回当前页的楼盘数据
-     * @param number 页数
-     */
     public List<Houses> getListByPage(int number) throws IOException;
 
     public Houses getDetailsByElement(Element li) throws IOException;
 
     public Houses getDetailsByUrl(String url) throws IOException;
+
+
+    public List<Floor> getFloorListByHousesName(String name) throws IOException;
 }
