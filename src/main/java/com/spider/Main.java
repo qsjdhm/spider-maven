@@ -14,8 +14,11 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        HousesAction housesAction = new HousesAction();
-        housesAction.syncAllList();
+        RebAction rebAction = new RebAction();
+        rebAction.syncAllList();
+
+//        HousesAction housesAction = new HousesAction();
+//        housesAction.syncAllList();
 
     }
 }

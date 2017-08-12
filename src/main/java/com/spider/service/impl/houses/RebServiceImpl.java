@@ -33,8 +33,23 @@ public class RebServiceImpl implements IRebService {
         for (Element tr : trs) {
             // 只获取有效数据的值
             if (tr.select("td").size() > 1) {
-                // 抓取详细信息
-                rebList.add(getDetailsByElement(tr));
+
+                try {
+                    rebList.add(getDetailsByElement(tr));
+                } catch (IOException e) {
+                    if (e.toString().indexOf("Read timed out") > -1) {
+                        // 错误信息
+                        Elements tds = tr.select("td");
+                        String fdcRebName = tds.eq(1).select("a").text();  // 房产商名称
+                        String fdcRebUrl = "http://www.jnfdc.gov.cn/kfqy/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
+
+                        System.out.println("获取房产商名称["+fdcRebName+"]房产商url["+fdcRebUrl+"]详情数据超时出错");
+
+                        // 错误时外部需进行以下操作获取此房产商详情数据
+//                        Reb reb = getDetailsByUrl(fdcRebUrl);
+//                        return reb;
+                    }
+                }
             }
         }
 
@@ -49,30 +64,20 @@ public class RebServiceImpl implements IRebService {
      * @param tr 抓取的每一条房产商DOM数据
      */
     @Override
-    public Reb getDetailsByElement(Element tr)  {
+    public Reb getDetailsByElement(Element tr) throws IOException {
 
         Elements tds = tr.select("td");
         String fdcUrl = "http://www.jnfdc.gov.cn/kfqy/" + tds.eq(1).select("a").attr("href");
         String name = tds.eq(1).select("a").text();
-        String qualificationLevel = tds.eq(2).text();
         String qualificationId = tds.eq(3).text();
-        String LegalPerson = tds.eq(4).text();
 
-        Reb reb = new Reb();
-
-        try {
-            reb = getDetailsByUrl(fdcUrl);
-        } catch (IOException e) {
-
-        }
+        Reb reb = getDetailsByUrl(fdcUrl);
 
         // 如果从列表抓到的名称没有...，就用列表的名称
         if (name.indexOf("...") == -1) {
             reb.setName(name);
         }
-        reb.setQualificationLevel(qualificationLevel);
         reb.setQualificationId(qualificationId);
-        reb.setLegalPerson(LegalPerson);
 
         return reb;
     }
