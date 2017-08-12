@@ -15,6 +15,7 @@ import java.util.List;
 public interface IFloorService {
 
 
+    // 获取地块的接口
     public List<Floor> getListByPage(String fdcName, int number) throws IOException;
 
     public Floor getDetailsByElement(Element tr) throws IOException;
@@ -22,6 +23,6 @@ public interface IFloorService {
     public Floor getDetailsByUrl(String url) throws IOException;
 
 
-
-    public List<Plots> getPlotsListByBaseUrl(String baseUrl) throws IOException;
+    // 获取此地块单元楼的接口
+    public List<Plots> getPlotsListByFloorDetailsUrl(String floorDetailsUrl) throws IOException;
 }

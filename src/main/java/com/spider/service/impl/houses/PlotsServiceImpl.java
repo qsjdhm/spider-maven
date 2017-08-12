@@ -17,59 +17,64 @@ public class PlotsServiceImpl implements IPlotsService {
 
 
 
-
+    /**
+     * 根据地块详情URL获取number页的单元楼列表
+     */
     public List<Plots> getListByPage(String url, int number) throws IOException {
 
-
+        String floorDetailsUrl = url.replace("show", "show_"+number);
         List<Plots> plotsList = new ArrayList<Plots>();
 
-        url = url.replace("show", "show_"+number);
-
-
-        Document pageDoc = Jsoup.connect(url).timeout(5000).get();
+        Document pageDoc = Jsoup.connect(floorDetailsUrl).timeout(5000).get();
+        String floorName = pageDoc.select(".message_table tr").eq(1).select("td").eq(1).text();
         Elements trs = pageDoc.select(".project_table tr");
 
-
-        // 因为抓取到的数据不规范，所以要自己组织为规范的数据格式
         for (Element tr : trs) {
-            // 只获取有效数据的值
+            // 只获取有效tr里面的数据
             if (tr.select("td").size() > 1) {
-
-                Plots plots = new Plots();
-
                 try {
-                    plots = getDetailsByElement(tr);
+                    Plots plots = getDetailsByElement(tr);
+                    plots.setpFloorName(floorName);
                     plotsList.add(plots);
                 } catch (IOException e) {
-                    Elements tds = tr.select("td");
-                    String plotsName = tds.eq(1).attr("title");  // 单元楼名称
-                    String fdcUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
+                    if (e.toString().indexOf("Read timed out") > -1) {
+                        // 错误信息
+                        Elements tds = tr.select("td");
+                        String fdcPlotsName = tds.eq(1).attr("title");  // 单元楼名称
+                        String fdcPlotsUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
 
-                    System.out.println("获取单元楼["+plotsName+"]["+fdcUrl+"]数据出错");
+                        System.out.println("获取地块名称["+floorName+"]的单元楼名称["+fdcPlotsName+"]单元楼url["+fdcPlotsUrl+"]详情数据超时出错");
+
+                        // 错误时外部需进行以下操作获取此地块详情数据
+//                        Plots plots = getDetailsByUrl(fdcPlotsUrl);
+//                        plots.setpFloorName(floorName);
+//                        return plots;
+                    }
+
                 }
             }
         }
 
-
         return plotsList;
     }
 
+    /**
+     * 根据dom获取此单元楼的详情数据
+     * 为了是补全部分数据（根据错误url时无法使用）
+     */
+    @Override
     public Plots getDetailsByElement(Element tr) throws IOException {
+
         Elements tds = tr.select("td");
-        String name = tds.eq(1).attr("title");  // 单元楼名称
-        String fdcUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
-        String salePermit = tds.eq(2).attr("title");  // 商品房预售许可证
-
-        Plots plots = getDetailsByUrl(fdcUrl);
-
-        plots.setName(name);
-        plots.setFdcUrl(fdcUrl);
-        plots.setSalePermit(salePermit);
-
+        String fdcDetailsUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
+        Plots plots = getDetailsByUrl(fdcDetailsUrl);
         return plots;
     }
 
-
+    /**
+     * 根据url获取单元楼详情数据（可单独供action调用）
+     */
+    @Override
     public Plots getDetailsByUrl(String url) throws IOException {
 
         // 根据url继续下潜抓取详细信息

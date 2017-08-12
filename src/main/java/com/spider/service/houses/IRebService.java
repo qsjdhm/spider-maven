@@ -13,13 +13,9 @@ import java.util.TreeMap;
  * 房产商业务接口
  */
 public interface IRebService {
-    /**
-     * 从政府网获取所有房产商数据
-     * @param number 页数
-     */
-    public List<Reb> getListByPage(int number) throws IOException;
 
-    public List<Reb> getListByUrl(String url) throws IOException;
+    // 获取房产商的接口
+    public List<Reb> getListByPage(int number) throws IOException;
 
     public Reb getDetailsByElement(Element tr) throws IOException;
 

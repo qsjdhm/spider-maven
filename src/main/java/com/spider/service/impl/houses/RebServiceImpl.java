@@ -19,8 +19,7 @@ import java.util.*;
 public class RebServiceImpl implements IRebService {
 
     /**
-     * 从政府网获取所有房产商数据
-     * @param number 页数
+     * 从政府网获取第number页房产商数据
      */
     @Override
     public List<Reb> getListByPage(int number) throws IOException {
@@ -42,29 +41,6 @@ public class RebServiceImpl implements IRebService {
         return rebList;
     }
 
-    /**
-     * 根据某一页房产商列表页面的url获取获取这一页的房产商列表数据
-     * @param url 某一页房产商列表页面的url
-     */
-    @Override
-    public List<Reb> getListByUrl(String url) throws IOException {
-
-        List<Reb> rebList = new ArrayList<Reb>();  // 承载房产商数据集合
-        Document pageDoc = null;  // 承载抓取到的此页房产商DOM数据
-
-        pageDoc = Jsoup.connect(url).timeout(5000).get();
-        Elements trs = pageDoc.select(".project_table tr");
-
-        for (Element tr : trs) {
-            if (tr.select("td").size() > 1) {
-                rebList.add(getDetailsByElement(tr));
-            }
-        }
-
-        LogFile.writerLogFile(Constant.SPIDER_LOG_PATH, Constant.SUCCESS, "[根据url]:"+url+"抓取[房产商]分页列表数据完成!");
-
-        return rebList;
-    }
 
 
 
@@ -90,7 +66,6 @@ public class RebServiceImpl implements IRebService {
 
         }
 
-
         // 如果从列表抓到的名称没有...，就用列表的名称
         if (name.indexOf("...") == -1) {
             reb.setName(name);
@@ -105,7 +80,6 @@ public class RebServiceImpl implements IRebService {
 
     /**
      * 根据某一个房产商详细页面的url获取这一个房产商的详细数据
-     * @param url 某一个房产商详细页面的url
      */
     @Override
     public Reb getDetailsByUrl(String url) throws IOException {

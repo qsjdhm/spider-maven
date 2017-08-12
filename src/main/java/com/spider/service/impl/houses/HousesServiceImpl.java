@@ -22,65 +22,67 @@ public class HousesServiceImpl implements IHousesService {
 
     /**
      * 返回当前页的楼盘数据
-     * @param housesNumber 页数
      */
     @Override
     public List<Houses> getListByPage(int housesNumber) throws IOException {
 
-        String url = "http://newhouse.jn.fang.com/house/dianshang/b9"+housesNumber;
-
+        String sfwUrl = "http://newhouse.jn.fang.com/house/dianshang/b9"+housesNumber;
         List<Houses> housesList = new ArrayList<Houses>();
 
-        Document pageDoc = null;
+        Document pageDoc = Jsoup.connect(sfwUrl).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
+        Elements lis = pageDoc.select("#newhouse_loupai_list li");
 
-        try {
-            pageDoc = Jsoup.connect(url).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
+        for (Element li : lis) {
+            try {
+                // 下潜地块数据查询
+                Houses houses = getDetailsByElement(li);
+                String fdcName = houses.getFdcName();
+                System.out.println("楼盘名称："+fdcName);
 
-            Elements lis = pageDoc.select("#newhouse_loupai_list li");
+                // 获取此楼盘的所有地块数据
+                List<Floor> housesFloorList = getFloorListByHousesName(fdcName);
+                houses.setFloorList(housesFloorList);
 
-            for (Element li : lis) {
-                Houses houses = new Houses();
+                housesList.add(houses);
+            } catch (IOException e) {
+                if (e.toString().indexOf("Read timed out") > -1) {
+                    // 错误信息
+                    String sfwHousesName = li.select(".nlc_details .nlcd_name a").text();
+                    String fdcHousesName = AnalysisHouseUtil.extractValidHousesName(sfwHousesName);
+                    String sfwHousesUrl = li.select(".nlc_details .nlcd_name a").attr("href");
+                    System.out.println("获取楼盘搜房网名称["+sfwHousesName+"]楼盘政府网名称["+fdcHousesName+"]搜房网url["+sfwHousesUrl+"]详情和下潜数据出错");
 
-                try {
-                    // 下潜地块数据查询
-                    houses = getDetailsByElement(li);
-                    String fdcName = houses.getFdcName();
-                    System.out.println("楼盘名称："+fdcName);
-                    System.out.println("楼盘url："+url);
-                    List<Floor> housesFloorList = getFloorListByHousesName(fdcName);
-                    houses.setFloorList(housesFloorList);
-
-                    housesList.add(houses);
-                } catch (IOException e) {
-                    String name = li.select(".nlc_details .nlcd_name a").text();
-                    System.out.println("获取楼盘["+name+"]数据出错");
-                }
+                    // 错误时外部需进行以下操作获取楼盘详情数据
+//                        Houses houses = getDetailsByUrl(sfwHousesUrl);
+//                        String fdcName = houses.getFdcName();
+//                        List<Floor> housesFloorList = getFloorListByHousesName(fdcHousesName);
+//                        houses.setFloorList(housesFloorList);
+//                        return houses;
+                    }
+                e.printStackTrace();
             }
-
-        } catch (IOException e) {
-            System.out.println("获取楼盘第"+housesNumber+"页["+url+"]失败："+e);
-            e.printStackTrace();
         }
 
         return housesList;
     }
 
 
+    /**
+     * 根据dom获取此楼盘的详情数据
+     * 为了是补全部分数据（根据错误url时无法使用）
+     */
+    @Override
     public Houses getDetailsByElement(Element li) throws IOException {
 
-        String sfwUrl = li.select(".nlc_details .nlcd_name a").attr("href");
-        String name = li.select(".nlc_details .nlcd_name a").text();
-        String cover = li.select(".nlc_img img").eq(1).attr("src");
-        String address = li.select(".nlc_details .address a").text();
-
-        Houses houses = getDetailsByUrl(sfwUrl);
-        houses.setName(name);
-        houses.setCover(cover);
-        houses.setAddress(address);
-
+        String sfwDetailsUrl = li.select(".nlc_details .nlcd_name a").attr("href");
+        Houses houses = getDetailsByUrl(sfwDetailsUrl);
         return houses;
     }
 
+    /**
+     * 根据url获取楼盘详情数据（可单独供action调用）
+     */
+    @Override
     public Houses getDetailsByUrl(String url) throws IOException {
 
         String sfwUrl = url;
@@ -123,46 +125,51 @@ public class HousesServiceImpl implements IHousesService {
         return houses;
     }
 
-
-
-
-    // 根据楼盘名称获取它的地块列表
+    /**
+     * 根据楼盘名称获取它的所有地块列表
+     */
+    @Override
     public List<Floor> getFloorListByHousesName(String name) throws IOException {
-        // 楼盘下的地块列表
+        // 此楼盘下所有地块列表
         List<Floor> allFloorList = new ArrayList<Floor>();
-
         int number = 1;
-        boolean isError = false;
+        boolean isTimedOut = false;
 
         do {
-
             List<Floor> pageFloorList = new ArrayList<Floor>();
+
             try {
+                // 获取此楼盘的第number页数据
                 pageFloorList = floorService.getListByPage(name, number);
 
                 System.out.println(name+"的地块列表----------");
                 for(Floor floor : pageFloorList) {
-                    System.out.println(floor.getName());
+                    System.out.println("地块："+floor.getName());
                 }
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
-                    // 判断e是超时异常，把isError设为true，表示这页数据为0是由超时异常导致的
-                    isError = true;
+                    isTimedOut = true;
+
+                    // 错误信息
+                    System.out.println("获取楼盘名称["+name+"]的地块列表第"+number+"页超时失败："+e);
+
+                    // 错误时外部需进行以下操作获取此楼盘楼盘第number页的列表数据
+//                    List<Floor> pageFloorList = floorService.getListByPage(name, number);
+//                    return pageFloorList;
                 }
-                System.out.println("获取"+name+"的地块列表第"+number+"页失败："+e);
                 e.printStackTrace();
             }
 
-            // 如果有3页数据，获取第1页数据超时异常数据为0，就可以正常的接着获取第2页
-            // 如果只有1页数据，并且是超时异常，接着获取第2页，如果第2页还是没有数据并且超时异常
-            // 接着获取第3页，如果获取到数据为0并且没有异常就会跳出dowhile循环
-
-
-            // 如果获取的这页数据为空，并且不是经过了异常，就表示全部数据获取完成或此楼盘没有地块列表
-            if (pageFloorList.size()==0 && !isError) {
-                number = 0;
+            // 如果这页数据为空，并且是由爬虫超时导致的，就继续获取第2页
+            // 如果第2页数据为空并超时，继续第3页
+            // 如果第3页数据为空，但是不是超时导致的，代表获取数据完成，结束循环
+            if (pageFloorList.size()==0) {
+                if (isTimedOut) {
+                    number++;
+                } else {
+                    number = 0;
+                }
             } else {
-                // 页数累加获取下页地块列表
                 number++;
                 // 把每页的地块数据添加到全部的地块列表中
                 for(Floor floor : pageFloorList) {

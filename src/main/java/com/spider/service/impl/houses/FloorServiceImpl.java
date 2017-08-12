@@ -4,6 +4,7 @@ import com.spider.entity.Floor;
 import com.spider.entity.Houses;
 import com.spider.entity.Plots;
 import com.spider.service.houses.IFloorService;
+import com.spider.utils.AnalysisHouseUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,43 +20,50 @@ public class FloorServiceImpl implements IFloorService {
     PlotsServiceImpl plotsService = new PlotsServiceImpl();
 
 
+    /**
+     * 根据楼盘名称获取number页的地块列表
+     */
+    @Override
     public List<Floor> getListByPage(String fdcName, int number) throws IOException {
 
+        String fdcUrl = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
         List<Floor> floorList = new ArrayList<Floor>();
 
-        String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
-
-        Document pageDoc = Jsoup.connect(url).timeout(5000).get();
+        Document pageDoc = Jsoup.connect(fdcUrl).timeout(5000).get();
         Elements trs = pageDoc.select(".project_table tr");
 
-        // 因为抓取到的数据不规范，所以要自己组织为规范的数据格式
         for (Element tr : trs) {
-            // 只获取有效数据的值
+            // 只获取有效tr里面的数据
             if (tr.select("td").size() > 1) {
-
-                Floor floor = new Floor();
-
                 try {
-
-                    floor = getDetailsByElement(tr);
+                    Floor floor = getDetailsByElement(tr);
                     floor.setpHousesName(fdcName);
-                    List<Plots> floorPlotsList = getPlotsListByBaseUrl(floor.getFdcUrl());
+                    List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floor.getFdcUrl());
                     floor.setPlotsList(floorPlotsList);
 
-
-                    System.out.println(floor.getName()+"的单元楼-------------");
+                    System.out.println(floor.getName()+"的单元楼列表-------------");
                     for (Plots floorPlots : floorPlotsList) {
-                        floorPlots.setpFloorName(floor.getName());
+                        //floorPlots.setpFloorName(floor.getName());
                         System.out.println(floorPlots.getName());
                     }
 
                     floorList.add(floor);
                 } catch (IOException e) {
-                    Elements tds = tr.select("td");
-                    String floorName = tds.eq(1).attr("title");  // 地块名称
-                    String fdcUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
+                    if (e.toString().indexOf("Read timed out") > -1) {
+                        // 错误信息
+                        Elements tds = tr.select("td");
+                        String fdcFloorName = tds.eq(1).attr("title");  // 地块名称
+                        String fdcFloorUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
+                        System.out.println("获取楼盘名称["+fdcName+"]地块名称["+fdcFloorName+"]地块url["+fdcFloorUrl+"]详情和下潜数据数据超时出错");
 
-                    System.out.println("获取地块["+floorName+"]["+fdcUrl+"]数据出错");
+                        // 错误时外部需进行以下操作获取此地块详情数据
+//                        Floor floor = getDetailsByUrl(fdcFloorUrl);
+//                        floor.setpHousesName(fdcName);
+//                        List<Plots> floorPlotsList = getPlotsListByBaseUrl(floor.getFdcUrl());
+//                        floor.setPlotsList(floorPlotsList);
+//                        return floor;
+                    }
+                    e.printStackTrace();
                 }
             }
         }
@@ -63,24 +71,23 @@ public class FloorServiceImpl implements IFloorService {
         return floorList;
     }
 
+    /**
+     * 根据dom获取此地块的详情数据
+     * 为了是补全部分数据（根据错误url时无法使用）
+     */
+    @Override
     public Floor getDetailsByElement(Element tr) throws IOException {
 
         Elements tds = tr.select("td");
-        String floorName = tds.eq(1).attr("title");  // 地块名称
-        String fdcUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
-        String canSold = tds.eq(4).text();  // 可售套数
-        String address = tds.eq(2).text();  // 项目地址
-
-        Floor floor = getDetailsByUrl(fdcUrl);
-
-        floor.setName(floorName);
-        floor.setFdcUrl(fdcUrl);
-        floor.setCanSold(canSold);
-        floor.setAddress(address);
-
+        String fdcDetailsUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
+        Floor floor = getDetailsByUrl(fdcDetailsUrl);
         return floor;
     }
 
+    /**
+     * 根据url获取地块详情数据（可单独供action调用）
+     */
+    @Override
     public Floor getDetailsByUrl(String url) throws IOException {
 
         Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
@@ -94,7 +101,6 @@ public class FloorServiceImpl implements IFloorService {
         String scale = trs.eq(3).select("td").eq(1).text();
         String totalPlotsNumber = trs.eq(3).select("td").eq(3).text();
         String property = trs.eq(5).select("td").eq(1).text();
-
 
         Floor floor = new Floor();
         floor.setName(name);
@@ -110,38 +116,48 @@ public class FloorServiceImpl implements IFloorService {
     }
 
 
+    /**
+     * 根据地块详情URL获取它的所有楼盘列表
+     */
+    @Override
+    public List<Plots> getPlotsListByFloorDetailsUrl(String floorDetailsUrl) throws IOException {
 
-    public List<Plots> getPlotsListByBaseUrl(String baseUrl) throws IOException {
-
+        // 此地块下的所有单元楼列表
         List<Plots> allPlotsList = new ArrayList<Plots>();
-
         int number = 1;
-        boolean isError = false;
+        boolean isTimedOut = false;
 
         do {
-
             List<Plots> pagePlotsList = new ArrayList<Plots>();
+
             try {
-                pagePlotsList = plotsService.getListByPage(baseUrl, number);
+                pagePlotsList = plotsService.getListByPage(floorDetailsUrl, number);
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     // 判断e是超时异常，把isError设为true，表示这页数据为0是由超时异常导致的
-                    isError = true;
+                    isTimedOut = true;
+
+                    // 错误信息
+                    System.out.println("获取地块url["+floorDetailsUrl+"]的单元楼列表第"+number+"页超时失败："+e);
+
+                    // 错误时外部需进行以下操作获取此楼盘楼盘第number页的列表数据
+//                    List<Plots> pagePlotsList = plotsService.getListByPage(floorDetailsUrl, number);
+//                    return pagePlotsList;
                 }
 
-                throw new IOException(e);
+                e.printStackTrace();
             }
 
-            // 如果有3页数据，获取第1页数据超时异常数据为0，就可以正常的接着获取第2页
-            // 如果只有1页数据，并且是超时异常，接着获取第2页，如果第2页还是没有数据并且超时异常
-            // 接着获取第3页，如果获取到数据为0并且没有异常就会跳出dowhile循环
-
-
-            // 如果获取的这页数据为空，并且不是经过了异常，就表示全部数据获取完成或此楼盘没有地块列表
-            if (pagePlotsList.size()==0 && !isError) {
-                number = 0;
+            // 如果这页数据为空，并且是由爬虫超时导致的，就继续获取第2页
+            // 如果第2页数据为空并超时，继续第3页
+            // 如果第3页数据为空，但是不是超时导致的，代表获取数据完成，结束循环
+            if (pagePlotsList.size()==0) {
+                if (isTimedOut) {
+                    number++;
+                } else {
+                    number = 0;
+                }
             } else {
-                // 页数累加获取下页地块列表
                 number++;
                 // 把每页的地块数据添加到全部的地块列表中
                 for(Plots plots : pagePlotsList) {

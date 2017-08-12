@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface IHousesService {
 
+    // 获取楼盘的接口
     public List<Houses> getListByPage(int number) throws IOException;
 
     public Houses getDetailsByElement(Element li) throws IOException;
@@ -21,5 +22,7 @@ public interface IHousesService {
     public Houses getDetailsByUrl(String url) throws IOException;
 
 
+
+    // 获取此楼盘地块的接口
     public List<Floor> getFloorListByHousesName(String name) throws IOException;
 }
