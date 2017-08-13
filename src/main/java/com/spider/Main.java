@@ -7,6 +7,8 @@ import com.spider.service.impl.houses.RebServiceImpl;
 
 import java.io.IOException;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by zhangyan on 17/7/16.
@@ -14,8 +16,14 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        RebAction rebAction = new RebAction();
-        rebAction.syncAllList();
+
+        Logger logger = LogManager.getLogger(Main.class.getName());
+
+
+        logger.error("方法发生错误，test");
+
+//        RebAction rebAction = new RebAction();
+//        rebAction.syncAllList();
 
 //        HousesAction housesAction = new HousesAction();
 //        housesAction.syncAllList();
