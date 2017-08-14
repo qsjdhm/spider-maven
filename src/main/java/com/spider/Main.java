@@ -21,6 +21,21 @@ public class Main {
 
 
         logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+        logger.error("方法发生错误，test");
+
 
 
 //        RebAction rebAction = new RebAction();
