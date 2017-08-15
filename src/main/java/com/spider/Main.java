@@ -19,10 +19,10 @@ public class Main {
 
         Logger logger = LogManager.getLogger(Main.class.getName());
 
-
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
+        logger.info("方法发生错误，info");
+        logger.info("方法发生错误，test");
+        logger.info("方法发生错误，test");
+        logger.info("方法发生错误，test");
         logger.error("方法发生错误，test");
         logger.error("方法发生错误，test");
         logger.error("方法发生错误，test");
