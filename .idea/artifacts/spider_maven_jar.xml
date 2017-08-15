@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="spider-maven:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/spider_maven_jar</output-path>
+    <root id="archive" name="spider-maven.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="spider-maven" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-core/2.1/log4j-core-2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-api/2.1/log4j-api-2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jsoup/jsoup/1.7.2/jsoup-1.7.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/logging/log4j/log4j-web/2.1/log4j-web-2.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
