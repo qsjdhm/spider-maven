@@ -38,7 +38,9 @@
         <RollingFile name="InfoMsg" fileName="${info_file_name}"
                      filePattern="${info_rolling_file_name}">
             <PatternLayout pattern="${log_pattern}"/>
-            <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            <!-- 每1天更新一次，此处查阅网上和官方示例中，都是以小时出现，我测试是以天为单位。（官方文档中说明按item类型是否是小时，但没找到在哪里设置item类型）另有其他各类型策略，请参阅官方文档 -->
+            <!-- TimeBasedTriggeringPolicy需要和filePattern配套使用，由于filePattern配置的时间最小粒度是dd天，所以表示每一天新建一个文件保存日志。SizeBasedTriggeringPolicy表示当文件大小大于指定size时，生成新的文件保存日志。 -->
+            <TimeBasedTriggeringPolicy modulate="true" interval="1" />
             <Filters>
                 <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
@@ -51,7 +53,7 @@
         <RollingFile name="ErrorMsg" fileName="${error_file_name}"
                      filePattern="${error_rolling_file_name}">
             <PatternLayout pattern="${log_pattern}"/>
-            <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            <TimeBasedTriggeringPolicy modulate="true" interval="1" />
             <Filters>
                 <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>

@@ -37,6 +37,8 @@ public class HousesAction {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
                     logger.error("同步楼盘第"+number+"页列表超时失败："+e);
+                } else {
+                    logger.error("同步楼盘第"+number+"页列表失败："+e);
                 }
                 e.printStackTrace();
             }

@@ -15,6 +15,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,8 +168,12 @@ public class HousesServiceImpl implements IHousesService {
                     // 错误时外部需进行以下操作获取此楼盘楼盘第number页的列表数据
 //                    List<Floor> pageFloorList = floorService.getListByPage(name, number);
 //                    return pageFloorList;
+                } else {
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw, true));
+
+                    logger.error("抓取楼盘["+name+"]第["+number+"]页列表失败："+sw.getBuffer().toString());
                 }
-                e.printStackTrace();
             }
 
             // 如果这页数据为空，并且是由爬虫超时导致的，就继续获取第2页
