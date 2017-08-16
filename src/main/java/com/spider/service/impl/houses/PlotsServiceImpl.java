@@ -3,6 +3,8 @@ package com.spider.service.impl.houses;
 import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.houses.IPlotsService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public class PlotsServiceImpl implements IPlotsService {
 
+    Logger logger = LogManager.getLogger(PlotsServiceImpl.class.getName());
 
 
     /**
@@ -36,6 +39,8 @@ public class PlotsServiceImpl implements IPlotsService {
                     Plots plots = getDetailsByElement(tr);
                     plots.setpFloorName(floorName);
                     plotsList.add(plots);
+
+                    logger.info("抓取地块["+floorName+"] - 单元楼["+plots.getName()+"]详情数据完成！");
                 } catch (IOException e) {
                     if (e.toString().indexOf("Read timed out") > -1) {
                         // 错误信息

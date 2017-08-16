@@ -1,10 +1,13 @@
 package com.spider.service.impl.houses;
 
+import com.spider.action.HousesAction;
 import com.spider.entity.Floor;
 import com.spider.entity.Houses;
 import com.spider.entity.Plots;
 import com.spider.service.houses.IFloorService;
 import com.spider.utils.AnalysisHouseUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +19,8 @@ import java.util.List;
 
 
 public class FloorServiceImpl implements IFloorService {
+
+    Logger logger = LogManager.getLogger(FloorServiceImpl.class.getName());
 
     PlotsServiceImpl plotsService = new PlotsServiceImpl();
 
@@ -38,16 +43,14 @@ public class FloorServiceImpl implements IFloorService {
                 try {
                     Floor floor = getDetailsByElement(tr);
                     floor.setpHousesName(fdcName);
+
+                    logger.info("抓取楼盘["+fdcName+"] - 地块["+floor.getName()+"]详情数据完成！");
+                    logger.info("正在抓取楼盘["+fdcName+"] - 地块["+floor.getName()+"]下潜数据...........");
+
                     List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floor.getFdcUrl());
                     floor.setPlotsList(floorPlotsList);
-
-                    System.out.println(floor.getName()+"的单元楼列表-------------");
-                    for (Plots floorPlots : floorPlotsList) {
-                        //floorPlots.setpFloorName(floor.getName());
-                        System.out.println(floorPlots.getName());
-                    }
-
                     floorList.add(floor);
+                    logger.info("抓取楼盘["+fdcName+"] - 地块["+floor.getName()+"]下潜数据完成！");
                 } catch (IOException e) {
                     if (e.toString().indexOf("Read timed out") > -1) {
                         // 错误信息

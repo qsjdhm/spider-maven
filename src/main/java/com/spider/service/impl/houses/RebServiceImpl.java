@@ -4,6 +4,8 @@ import com.spider.entity.Reb;
 import com.spider.utils.Constant;
 import com.spider.service.houses.IRebService;
 import com.spider.utils.LogFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,6 +19,9 @@ import java.util.*;
  * 处理房产商业务功能
  */
 public class RebServiceImpl implements IRebService {
+
+    Logger logger = LogManager.getLogger(RebServiceImpl.class.getName());
+
 
     /**
      * 从政府网获取第number页房产商数据
@@ -35,7 +40,9 @@ public class RebServiceImpl implements IRebService {
             if (tr.select("td").size() > 1) {
 
                 try {
-                    rebList.add(getDetailsByElement(tr));
+                    Reb reb = getDetailsByElement(tr);
+                    rebList.add(reb);
+                    logger.info("抓取房产商["+reb.getName()+"]详情数据完成！");
                 } catch (IOException e) {
                     if (e.toString().indexOf("Read timed out") > -1) {
                         // 错误信息

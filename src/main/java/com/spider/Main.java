@@ -17,32 +17,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
 
-        Logger logger = LogManager.getLogger(Main.class.getName());
-
-        logger.info("方法发生错误，info");
-        logger.info("方法发生错误，info");
-        logger.info("方法发生错误，info");
-        logger.info("方法发生错误，info");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-        logger.error("方法发生错误，test");
-
-
 
 //        RebAction rebAction = new RebAction();
 //        rebAction.syncAllList();
 
-//        HousesAction housesAction = new HousesAction();
-//        housesAction.syncAllList();
+        HousesAction housesAction = new HousesAction();
+        housesAction.syncAllList();
 
     }
 }

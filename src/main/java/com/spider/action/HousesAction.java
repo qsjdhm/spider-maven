@@ -1,10 +1,10 @@
 package com.spider.action;
 
-import com.spider.entity.Floor;
+import com.spider.Main;
 import com.spider.entity.Houses;
-import com.spider.entity.Reb;
 import com.spider.service.impl.houses.HousesServiceImpl;
-import com.spider.service.impl.houses.RebServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import java.util.List;
 public class HousesAction {
 
     HousesServiceImpl housesService = new HousesServiceImpl();
+    Logger logger = LogManager.getLogger(HousesAction.class.getName());
+
 
     /**
      * 同步楼盘的所有信息
@@ -34,8 +36,7 @@ public class HousesAction {
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
-
-                    System.out.println("同步楼盘第"+number+"页列表超时失败："+e);
+                    logger.error("同步楼盘第"+number+"页列表超时失败："+e);
                 }
                 e.printStackTrace();
             }
@@ -76,7 +77,7 @@ public class HousesAction {
             }
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                System.out.println("同步楼盘第"+number+"页列表超时失败："+e);
+                logger.error("同步楼盘第"+number+"页列表超时失败："+e);
             }
             e.printStackTrace();
         }
@@ -92,7 +93,7 @@ public class HousesAction {
             System.out.println(houses.getName());
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                System.out.println("同步楼盘url["+url+"]详情数据超时失败："+e);
+                logger.error("同步楼盘url["+url+"]详情数据超时失败："+e);
             }
             e.printStackTrace();
         }

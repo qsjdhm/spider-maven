@@ -1,11 +1,14 @@
 package com.spider.service.impl.houses;
 
+import com.spider.action.HousesAction;
 import com.spider.entity.Floor;
 import com.spider.entity.Houses;
 import com.spider.service.houses.IHousesService;
 import com.spider.utils.AnalysisHouseUtil;
 import com.spider.utils.Constant;
 import com.spider.utils.LogFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HousesServiceImpl implements IHousesService {
+
+    Logger logger = LogManager.getLogger(HousesServiceImpl.class.getName());
 
     private FloorServiceImpl floorService = new FloorServiceImpl();
 
@@ -33,33 +38,38 @@ public class HousesServiceImpl implements IHousesService {
         Elements lis = pageDoc.select("#newhouse_loupai_list li");
 
         for (Element li : lis) {
-            try {
-                // 下潜地块数据查询
-                Houses houses = getDetailsByElement(li);
-                String fdcName = houses.getFdcName();
-                System.out.println("楼盘名称："+fdcName);
+            if (li.select(".clearfix").size() > 0) {
+                try {
+                    // 下潜地块数据查询
+                    Houses houses = getDetailsByElement(li);
 
-                // 获取此楼盘的所有地块数据
-                List<Floor> housesFloorList = getFloorListByHousesName(fdcName);
-                houses.setFloorList(housesFloorList);
+                    String fdcName = houses.getFdcName();
+                    logger.info("抓取楼盘["+fdcName+"]详情数据完成！");
+                    logger.info("正在抓取楼盘["+fdcName+"]下潜数据...........");
 
-                housesList.add(houses);
-            } catch (IOException e) {
-                if (e.toString().indexOf("Read timed out") > -1) {
-                    // 错误信息
-                    String sfwHousesName = li.select(".nlc_details .nlcd_name a").text();
-                    String fdcHousesName = AnalysisHouseUtil.extractValidHousesName(sfwHousesName);
-                    String sfwHousesUrl = li.select(".nlc_details .nlcd_name a").attr("href");
-                    System.out.println("获取楼盘搜房网名称["+sfwHousesName+"]楼盘政府网名称["+fdcHousesName+"]搜房网url["+sfwHousesUrl+"]详情和下潜数据出错");
+                    // 获取此楼盘的所有地块数据
+                    List<Floor> housesFloorList = getFloorListByHousesName(fdcName);
+                    houses.setFloorList(housesFloorList);
 
-                    // 错误时外部需进行以下操作获取楼盘详情数据
+                    housesList.add(houses);
+                    logger.info("抓取楼盘["+fdcName+"]下潜数据完成！");
+                } catch (IOException e) {
+                    if (e.toString().indexOf("Read timed out") > -1) {
+                        // 错误信息
+                        String sfwHousesName = li.select(".nlc_details .nlcd_name a").text();
+                        String fdcHousesName = AnalysisHouseUtil.extractValidHousesName(sfwHousesName);
+                        String sfwHousesUrl = li.select(".nlc_details .nlcd_name a").attr("href");
+                        System.out.println("获取楼盘搜房网名称["+sfwHousesName+"]楼盘政府网名称["+fdcHousesName+"]搜房网url["+sfwHousesUrl+"]详情和下潜数据出错");
+
+                        // 错误时外部需进行以下操作获取楼盘详情数据
 //                        Houses houses = getDetailsByUrl(sfwHousesUrl);
 //                        String fdcName = houses.getFdcName();
 //                        List<Floor> housesFloorList = getFloorListByHousesName(fdcHousesName);
 //                        houses.setFloorList(housesFloorList);
 //                        return houses;
                     }
-                e.printStackTrace();
+                    e.printStackTrace();
+                }
             }
         }
 
