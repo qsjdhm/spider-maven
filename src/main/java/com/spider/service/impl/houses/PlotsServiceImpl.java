@@ -28,7 +28,7 @@ public class PlotsServiceImpl implements IPlotsService {
         String floorDetailsUrl = url.replace("show", "show_"+number);
         List<Plots> plotsList = new ArrayList<Plots>();
 
-        Document pageDoc = Jsoup.connect(floorDetailsUrl).timeout(5000).get();
+        Document pageDoc = Jsoup.connect(floorDetailsUrl).get();
         String floorName = pageDoc.select(".message_table tr").eq(1).select("td").eq(1).text();
         Elements trs = pageDoc.select(".project_table tr");
 
@@ -83,7 +83,7 @@ public class PlotsServiceImpl implements IPlotsService {
     public Plots getDetailsByUrl(String url) throws IOException {
 
         // 根据url继续下潜抓取详细信息
-        Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
+        Document detailedDoc = Jsoup.connect(url).get();
         Elements trs = detailedDoc.select(".message_table tr");
 
         String name = trs.eq(1).select("td").eq(1).text();  // 单元楼名称

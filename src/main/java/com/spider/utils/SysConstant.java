@@ -6,7 +6,7 @@ import static java.io.File.separator;
  * Created by zhangyan on 17/7/23.
  * 用于保存作用域整个项目的常量
  */
-public class Constant {
+public class SysConstant {
     // 爬虫进度日志路径
     public final static String SPIDER_LOG_PATH = "log" + separator + "spider_schedule" + separator;
     // 方法调用历史日志路径

@@ -28,14 +28,19 @@ public class SpiderErrorServiceImpl {
                                 String url, String content,
                                 String pReb, String pHouses, String pFloor) {
         Map<String, String> error = new HashMap<String, String>();
-        error.put("type", type);
-        error.put("from", from);
-        error.put("name", name);
+
+        // 再次同步会根据url进行同步，其他信息都只是提示
         error.put("url", url);
-        error.put("content", content);
-        error.put("pReb", pReb);
-        error.put("pHouses", pHouses);
-        error.put("pFloor", pFloor);
+
+
+//        error.put("type", type);
+//        error.put("from", from);
+//        error.put("name", name);
+//        error.put("url", url);
+//        error.put("content", content);
+//        error.put("pReb", pReb);
+//        error.put("pHouses", pHouses);
+//        error.put("pFloor", pFloor);
         errorList.add(error);
     }
 

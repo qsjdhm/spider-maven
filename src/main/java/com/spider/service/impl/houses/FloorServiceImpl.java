@@ -34,7 +34,7 @@ public class FloorServiceImpl implements IFloorService {
         String fdcUrl = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
         List<Floor> floorList = new ArrayList<Floor>();
 
-        Document pageDoc = Jsoup.connect(fdcUrl).timeout(5000).get();
+        Document pageDoc = Jsoup.connect(fdcUrl).get();
         Elements trs = pageDoc.select(".project_table tr");
 
         for (Element tr : trs) {
@@ -93,7 +93,7 @@ public class FloorServiceImpl implements IFloorService {
     @Override
     public Floor getDetailsByUrl(String url) throws IOException {
 
-        Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
+        Document detailedDoc = Jsoup.connect(url).get();
         Elements trs = detailedDoc.select(".message_table tr");
 
         String name = trs.eq(1).select("td").eq(1).text();

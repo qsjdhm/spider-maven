@@ -1,12 +1,9 @@
 package com.spider.service.impl.houses;
 
-import com.spider.action.HousesAction;
 import com.spider.entity.Floor;
 import com.spider.entity.Houses;
 import com.spider.service.houses.IHousesService;
 import com.spider.utils.AnalysisHouseUtil;
-import com.spider.utils.Constant;
-import com.spider.utils.LogFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -36,7 +33,7 @@ public class HousesServiceImpl implements IHousesService {
         String sfwUrl = "http://newhouse.jn.fang.com/house/dianshang/b9"+housesNumber;
         List<Houses> housesList = new ArrayList<Houses>();
 
-        Document pageDoc = Jsoup.connect(sfwUrl).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
+        Document pageDoc = Jsoup.connect(sfwUrl).timeout(100).get();  // 承载抓取到的每页房产商DOM数据
         Elements lis = pageDoc.select("#newhouse_loupai_list li");
 
         for (Element li : lis) {
@@ -105,7 +102,7 @@ public class HousesServiceImpl implements IHousesService {
         String openingDate = null;
         String pRebName = null;
 
-        Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
+        Document detailedDoc = Jsoup.connect(url).timeout(500).get();
 
         // 如果是公寓类型
         if (detailedDoc.select(".inf_left1 strong").text().equals("")) {

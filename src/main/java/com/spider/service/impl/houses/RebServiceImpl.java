@@ -1,9 +1,7 @@
 package com.spider.service.impl.houses;
 
 import com.spider.entity.Reb;
-import com.spider.utils.Constant;
 import com.spider.service.houses.IRebService;
-import com.spider.utils.LogFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
