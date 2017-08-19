@@ -3,6 +3,7 @@ package com.spider.service.impl.houses;
 import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.houses.IPlotsService;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class PlotsServiceImpl implements IPlotsService {
 
+    private SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
     Logger logger = LogManager.getLogger(PlotsServiceImpl.class.getName());
 
 
@@ -28,7 +30,7 @@ public class PlotsServiceImpl implements IPlotsService {
         String floorDetailsUrl = url.replace("show", "show_"+number);
         List<Plots> plotsList = new ArrayList<Plots>();
 
-        Document pageDoc = Jsoup.connect(floorDetailsUrl).get();
+        Document pageDoc = Jsoup.connect(floorDetailsUrl).timeout(5000).get();
         String floorName = pageDoc.select(".message_table tr").eq(1).select("td").eq(1).text();
         Elements trs = pageDoc.select(".project_table tr");
 
@@ -36,11 +38,17 @@ public class PlotsServiceImpl implements IPlotsService {
             // 只获取有效tr里面的数据
             if (tr.select("td").size() > 1) {
                 try {
-                    Plots plots = getDetailsByElement(tr);
+                    Plots plots = getDetailsByElement(floorName, tr);
                     plots.setpFloorName(floorName);
                     plotsList.add(plots);
 
-                    logger.info("抓取地块["+floorName+"] - 单元楼["+plots.getName()+"]详情数据完成！");
+                    List locationList = new ArrayList();
+                    locationList.add(floorName);
+                    locationList.add(plots.getName());
+                    progressService.addProgress(
+                            "单元楼", "详情", 0,
+                            "完成", "", locationList, null
+                    );
                 } catch (IOException e) {
                     if (e.toString().indexOf("Read timed out") > -1) {
                         // 错误信息
@@ -48,7 +56,14 @@ public class PlotsServiceImpl implements IPlotsService {
                         String fdcPlotsName = tds.eq(1).attr("title");  // 单元楼名称
                         String fdcPlotsUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
 
-                        System.out.println("获取地块名称["+floorName+"]的单元楼名称["+fdcPlotsName+"]单元楼url["+fdcPlotsUrl+"]详情数据超时出错");
+
+                        List locationList = new ArrayList();
+                        locationList.add(floorName);
+                        locationList.add(fdcPlotsName);
+                        progressService.addProgress(
+                                "单元楼", "详情", 0,
+                                "超时异常", fdcPlotsUrl, locationList, e
+                        );
 
                         // 错误时外部需进行以下操作获取此地块详情数据
 //                        Plots plots = getDetailsByUrl(fdcPlotsUrl);
@@ -68,11 +83,22 @@ public class PlotsServiceImpl implements IPlotsService {
      * 为了是补全部分数据（根据错误url时无法使用）
      */
     @Override
-    public Plots getDetailsByElement(Element tr) throws IOException {
+    public Plots getDetailsByElement(String floorName, Element tr) throws IOException {
 
         Elements tds = tr.select("td");
+        String fdcPlotsName = tds.eq(1).attr("title");  // 单元楼名称
         String fdcDetailsUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
+
+        List locationList = new ArrayList();
+        locationList.add(floorName);
+        locationList.add(fdcPlotsName);
+        progressService.addProgress(
+                "单元楼", "详情", 0,
+                "开始", "", locationList, null
+        );
+
         Plots plots = getDetailsByUrl(fdcDetailsUrl);
+        plots.setName(fdcPlotsName);
         return plots;
     }
 
@@ -83,7 +109,7 @@ public class PlotsServiceImpl implements IPlotsService {
     public Plots getDetailsByUrl(String url) throws IOException {
 
         // 根据url继续下潜抓取详细信息
-        Document detailedDoc = Jsoup.connect(url).get();
+        Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
         Elements trs = detailedDoc.select(".message_table tr");
 
         String name = trs.eq(1).select("td").eq(1).text();  // 单元楼名称

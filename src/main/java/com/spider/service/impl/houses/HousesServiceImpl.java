@@ -3,6 +3,7 @@ package com.spider.service.impl.houses;
 import com.spider.entity.Floor;
 import com.spider.entity.Houses;
 import com.spider.service.houses.IHousesService;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.utils.AnalysisHouseUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class HousesServiceImpl implements IHousesService {
 
-    Logger logger = LogManager.getLogger(HousesServiceImpl.class.getName());
+    private SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
 
     private FloorServiceImpl floorService = new FloorServiceImpl();
 
@@ -33,7 +34,7 @@ public class HousesServiceImpl implements IHousesService {
         String sfwUrl = "http://newhouse.jn.fang.com/house/dianshang/b9"+housesNumber;
         List<Houses> housesList = new ArrayList<Houses>();
 
-        Document pageDoc = Jsoup.connect(sfwUrl).timeout(100).get();  // 承载抓取到的每页房产商DOM数据
+        Document pageDoc = Jsoup.connect(sfwUrl).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
         Elements lis = pageDoc.select("#newhouse_loupai_list li");
 
         for (Element li : lis) {
@@ -41,24 +42,33 @@ public class HousesServiceImpl implements IHousesService {
                 try {
                     // 下潜地块数据查询
                     Houses houses = getDetailsByElement(li);
-
                     String fdcName = houses.getFdcName();
-                    logger.info("抓取楼盘["+fdcName+"]详情数据完成！");
-                    logger.info("正在抓取楼盘["+fdcName+"]下潜数据...........");
 
                     // 获取此楼盘的所有地块数据
                     List<Floor> housesFloorList = getFloorListByHousesName(fdcName);
                     houses.setFloorList(housesFloorList);
-
                     housesList.add(houses);
-                    logger.info("抓取楼盘["+fdcName+"]下潜数据完成！");
+
+                    List locationList = new ArrayList();
+                    locationList.add(fdcName);
+                    progressService.addProgress(
+                            "楼盘", "详情", 0,
+                            "完成", "", locationList, null
+                    );
                 } catch (IOException e) {
                     if (e.toString().indexOf("Read timed out") > -1) {
                         // 错误信息
                         String sfwHousesName = li.select(".nlc_details .nlcd_name a").text();
                         String fdcHousesName = AnalysisHouseUtil.extractValidHousesName(sfwHousesName);
                         String sfwHousesUrl = li.select(".nlc_details .nlcd_name a").attr("href");
-                        System.out.println("获取楼盘搜房网名称["+sfwHousesName+"]楼盘政府网名称["+fdcHousesName+"]搜房网url["+sfwHousesUrl+"]详情和下潜数据出错");
+
+                        List locationList = new ArrayList();
+                        locationList.add(fdcHousesName);
+                        progressService.addProgress(
+                                "楼盘", "详情", 0,
+                                "超时异常", sfwHousesUrl, locationList, e
+                        );
+
 
                         // 错误时外部需进行以下操作获取楼盘详情数据
 //                        Houses houses = getDetailsByUrl(sfwHousesUrl);
@@ -83,7 +93,17 @@ public class HousesServiceImpl implements IHousesService {
     @Override
     public Houses getDetailsByElement(Element li) throws IOException {
 
+        String sfwHousesName = li.select(".nlc_details .nlcd_name a").text();
+        String fdcHousesName = AnalysisHouseUtil.extractValidHousesName(sfwHousesName);
         String sfwDetailsUrl = li.select(".nlc_details .nlcd_name a").attr("href");
+
+        List locationList = new ArrayList();
+        locationList.add(fdcHousesName);
+        progressService.addProgress(
+                "楼盘", "详情", 0,
+                "开始", "", locationList, null
+        );
+
         Houses houses = getDetailsByUrl(sfwDetailsUrl);
         return houses;
     }
@@ -102,7 +122,7 @@ public class HousesServiceImpl implements IHousesService {
         String openingDate = null;
         String pRebName = null;
 
-        Document detailedDoc = Jsoup.connect(url).timeout(500).get();
+        Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
 
         // 如果是公寓类型
         if (detailedDoc.select(".inf_left1 strong").text().equals("")) {
@@ -147,30 +167,38 @@ public class HousesServiceImpl implements IHousesService {
         do {
             List<Floor> pageFloorList = new ArrayList<Floor>();
 
+            // 组织同步信息数据列表
+            List locationList = new ArrayList();
+            locationList.add(name);
+
             try {
+                progressService.addProgress(
+                        "地块", "分页", number,
+                        "开始", "", locationList, null
+                );
+
                 // 获取此楼盘的第number页数据
                 pageFloorList = floorService.getListByPage(name, number);
 
-                System.out.println(name+"的地块列表----------");
-                for(Floor floor : pageFloorList) {
-                    System.out.println("地块："+floor.getName());
-                }
+                progressService.addProgress(
+                        "地块", "分页", number,
+                        "完成", "", locationList, null
+                );
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    // 错误信息
-                    System.out.println("获取楼盘名称["+name+"]的地块列表第"+number+"页超时失败："+e);
+                    String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+name+"&en=";
+                    progressService.addProgress(
+                            "地块", "分页", number,
+                            "超时异常", url, locationList, e
+                    );
 
                     // 错误时外部需进行以下操作获取此楼盘楼盘第number页的列表数据
 //                    List<Floor> pageFloorList = floorService.getListByPage(name, number);
 //                    return pageFloorList;
-                } else {
-                    StringWriter sw = new StringWriter();
-                    e.printStackTrace(new PrintWriter(sw, true));
-
-                    logger.error("抓取楼盘["+name+"]第["+number+"]页列表失败："+sw.getBuffer().toString());
                 }
+                e.printStackTrace();
             }
 
             // 如果这页数据为空，并且是由爬虫超时导致的，就继续获取第2页

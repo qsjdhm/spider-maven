@@ -17,7 +17,7 @@ public interface IPlotsService {
     // 获取单元楼的接口
     public List<Plots> getListByPage(String url, int number) throws IOException;
 
-    public Plots getDetailsByElement(Element tr) throws IOException;
+    public Plots getDetailsByElement(String floorName, Element tr) throws IOException;
 
     public Plots getDetailsByUrl(String url) throws IOException;
 

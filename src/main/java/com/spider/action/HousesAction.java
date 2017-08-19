@@ -3,6 +3,7 @@ package com.spider.action;
 import com.spider.Main;
 import com.spider.entity.Houses;
 import com.spider.service.impl.houses.HousesServiceImpl;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,8 +13,8 @@ import java.util.List;
 
 public class HousesAction {
 
+    SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
     HousesServiceImpl housesService = new HousesServiceImpl();
-    Logger logger = LogManager.getLogger(HousesAction.class.getName());
 
 
     /**
@@ -28,17 +29,26 @@ public class HousesAction {
         do {
             List<Houses> pageHousesList = new ArrayList<Houses>();
             try {
+                progressService.addProgress(
+                        "楼盘", "分页", number,
+                        "开始", "", new ArrayList(), null
+                );
+
                 pageHousesList = housesService.getListByPage(number);
-                System.out.println("第"+number+"页楼盘列表----------");
-                for(Houses houses : pageHousesList) {
-                    System.out.println(houses.getName());
-                }
+
+                progressService.addProgress(
+                        "楼盘", "分页", number,
+                        "完成", "", new ArrayList(), null
+                );
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
-                    logger.error("同步楼盘第"+number+"页列表超时失败："+e);
-                } else {
-                    logger.error("同步楼盘第"+number+"页列表失败："+e);
+
+                    String url = "http://newhouse.jn.fang.com/house/dianshang/b9"+number;
+                    progressService.addProgress(
+                            "楼盘", "分页", number,
+                            "超时异常", url, new ArrayList(), e
+                    );
                 }
                 e.printStackTrace();
             }
@@ -74,12 +84,19 @@ public class HousesAction {
 
         try {
             housesList = housesService.getListByPage(number);
-            for(Houses houses : housesList) {
-                System.out.println(houses.getName());
-            }
+
+            progressService.addProgress(
+                    "楼盘", "分页", number,
+                    "完毕", "", new ArrayList(), null
+            );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                logger.error("同步楼盘第"+number+"页列表超时失败："+e);
+
+                String url = "http://newhouse.jn.fang.com/house/dianshang/b9"+number;
+                progressService.addProgress(
+                        "楼盘", "分页", number,
+                        "超时异常", url, new ArrayList(), e
+                );
             }
             e.printStackTrace();
         }
@@ -92,10 +109,20 @@ public class HousesAction {
 
         try {
             Houses houses = housesService.getDetailsByUrl(url);
-            System.out.println(houses.getName());
+
+            List locationList = new ArrayList();
+            locationList.add(houses.getFdcName());
+            progressService.addProgress(
+                    "楼盘", "详情", 0,
+                    "完成", "", locationList, null
+            );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                logger.error("同步楼盘url["+url+"]详情数据超时失败："+e);
+
+                progressService.addProgress(
+                        "楼盘", "详情", 0,
+                        "超时异常", url, new ArrayList(), e
+                );
             }
             e.printStackTrace();
         }

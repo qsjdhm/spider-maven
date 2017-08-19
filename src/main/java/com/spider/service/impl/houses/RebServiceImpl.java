@@ -19,9 +19,7 @@ import java.util.*;
  */
 public class RebServiceImpl implements IRebService {
 
-    SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
-
-    Logger logger = LogManager.getLogger(RebServiceImpl.class.getName());
+    private SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
 
 
     /**
@@ -90,6 +88,13 @@ public class RebServiceImpl implements IRebService {
         String fdcUrl = "http://www.jnfdc.gov.cn/kfqy/" + tds.eq(1).select("a").attr("href");
         String name = tds.eq(1).select("a").text();
         String qualificationId = tds.eq(3).text();
+
+        List locationList = new ArrayList();
+        locationList.add(name);
+        progressService.addProgress(
+                "房产商", "详情", 0,
+                "开始", "", locationList, null
+        );
 
         Reb reb = getDetailsByUrl(fdcUrl);
 

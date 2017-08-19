@@ -98,7 +98,7 @@ public class RebAction {
                         "超时异常", url, new ArrayList(), e
                 );
             }
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -125,7 +125,7 @@ public class RebAction {
                         "超时异常", url, new ArrayList(), e
                 );
             }
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 

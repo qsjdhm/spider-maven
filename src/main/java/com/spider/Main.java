@@ -7,6 +7,8 @@ import com.spider.service.impl.houses.RebServiceImpl;
 
 import java.io.IOException;
 import java.util.List;
+
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +22,8 @@ public class Main {
 
 //        RebAction rebAction = new RebAction();
 //        rebAction.syncAllList();
+
+
 
         HousesAction housesAction = new HousesAction();
         housesAction.syncAllList();

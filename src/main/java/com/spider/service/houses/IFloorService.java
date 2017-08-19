@@ -18,7 +18,7 @@ public interface IFloorService {
     // 获取地块的接口
     public List<Floor> getListByPage(String fdcName, int number) throws IOException;
 
-    public Floor getDetailsByElement(Element tr) throws IOException;
+    public Floor getDetailsByElement(String fdcName, Element tr) throws IOException;
 
     public Floor getDetailsByUrl(String url) throws IOException;
 

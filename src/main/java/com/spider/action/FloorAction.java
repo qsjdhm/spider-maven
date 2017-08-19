@@ -2,6 +2,7 @@ package com.spider.action;
 
 import com.spider.entity.Floor;
 import com.spider.service.impl.houses.FloorServiceImpl;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class FloorAction {
 
+    SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
     FloorServiceImpl floorService = new FloorServiceImpl();
 
 
@@ -25,17 +27,32 @@ public class FloorAction {
 
         do {
             List<Floor> pageFloorList = new ArrayList<Floor>();
+
+            // 组织同步信息数据列表
+            List locationList = new ArrayList();
+            locationList.add(housesName);
+
             try {
+                progressService.addProgress(
+                        "地块", "分页", number,
+                        "开始", "", locationList, null
+                );
+
                 pageFloorList = floorService.getListByPage(housesName, number);
-                System.out.println("第"+number+"页地块列表----------");
-                for(Floor floor : pageFloorList) {
-                    System.out.println(floor.getName());
-                }
+
+                progressService.addProgress(
+                        "地块", "分页", number,
+                        "完成", "", locationList, null
+                );
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    System.out.println("同步楼盘["+housesName+"]第"+number+"页列表超时失败："+e);
+                    String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+housesName+"&en=";
+                    progressService.addProgress(
+                            "地块", "分页", number,
+                            "超时异常", url, locationList, e
+                    );
                 }
                 e.printStackTrace();
             }
@@ -71,14 +88,30 @@ public class FloorAction {
         fdcName = "中海国际";
         List<Floor> floorList = new ArrayList<Floor>();
 
+        // 组织同步信息数据列表
+        List locationList = new ArrayList();
+        locationList.add(fdcName);
+
         try {
+            progressService.addProgress(
+                    "地块", "分页", number,
+                    "开始", "", locationList, null
+            );
+
             floorList = floorService.getListByPage(fdcName, number);
-            for(Floor floor : floorList) {
-                System.out.println(floor.getName());
-            }
+
+            progressService.addProgress(
+                    "地块", "分页", number,
+                    "完成", "", locationList, null
+            );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                System.out.println("同步楼盘["+fdcName+"]地块第"+number+"页列表超时失败："+e);
+
+                String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
+                progressService.addProgress(
+                        "地块", "分页", number,
+                        "超时异常", url, locationList, e
+                );
             }
             e.printStackTrace();
         }
@@ -90,6 +123,14 @@ public class FloorAction {
     public void syncDetailsByUrl(String url) {
 
         try {
+//            List locationList = new ArrayList();
+//            locationList.add(fdcName);
+//            locationList.add(fdcFloorName);
+//            progressService.addProgress(
+//                    "地块", "详情", 0,
+//                    "开始", "", locationList, null
+//            );
+
             Floor floor = floorService.getDetailsByUrl(url);
             System.out.println(floor.getName());
         } catch (IOException e) {

@@ -5,6 +5,7 @@ import com.spider.entity.Floor;
 import com.spider.entity.Houses;
 import com.spider.entity.Plots;
 import com.spider.service.houses.IFloorService;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.utils.AnalysisHouseUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,8 +21,7 @@ import java.util.List;
 
 public class FloorServiceImpl implements IFloorService {
 
-    Logger logger = LogManager.getLogger(FloorServiceImpl.class.getName());
-
+    private SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
     PlotsServiceImpl plotsService = new PlotsServiceImpl();
 
 
@@ -34,30 +34,41 @@ public class FloorServiceImpl implements IFloorService {
         String fdcUrl = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
         List<Floor> floorList = new ArrayList<Floor>();
 
-        Document pageDoc = Jsoup.connect(fdcUrl).get();
+        Document pageDoc = Jsoup.connect(fdcUrl).timeout(5000).get();
         Elements trs = pageDoc.select(".project_table tr");
 
         for (Element tr : trs) {
             // 只获取有效tr里面的数据
             if (tr.select("td").size() > 1) {
                 try {
-                    Floor floor = getDetailsByElement(tr);
+                    Floor floor = getDetailsByElement(fdcName, tr);
                     floor.setpHousesName(fdcName);
-
-                    logger.info("抓取楼盘["+fdcName+"] - 地块["+floor.getName()+"]详情数据完成！");
-                    logger.info("正在抓取楼盘["+fdcName+"] - 地块["+floor.getName()+"]下潜数据...........");
 
                     List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floor.getFdcUrl());
                     floor.setPlotsList(floorPlotsList);
                     floorList.add(floor);
-                    logger.info("抓取楼盘["+fdcName+"] - 地块["+floor.getName()+"]下潜数据完成！");
+
+                    List locationList = new ArrayList();
+                    locationList.add(fdcName);
+                    locationList.add(floor.getName());
+                    progressService.addProgress(
+                            "地块", "详情", 0,
+                            "完成", "", locationList, null
+                    );
                 } catch (IOException e) {
                     if (e.toString().indexOf("Read timed out") > -1) {
                         // 错误信息
                         Elements tds = tr.select("td");
                         String fdcFloorName = tds.eq(1).attr("title");  // 地块名称
                         String fdcFloorUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
-                        System.out.println("获取楼盘名称["+fdcName+"]地块名称["+fdcFloorName+"]地块url["+fdcFloorUrl+"]详情和下潜数据数据超时出错");
+
+                        List locationList = new ArrayList();
+                        locationList.add(fdcName);
+                        locationList.add(fdcFloorName);
+                        progressService.addProgress(
+                                "地块", "详情", 0,
+                                "超时异常", fdcFloorUrl, locationList, e
+                        );
 
                         // 错误时外部需进行以下操作获取此地块详情数据
 //                        Floor floor = getDetailsByUrl(fdcFloorUrl);
@@ -79,10 +90,20 @@ public class FloorServiceImpl implements IFloorService {
      * 为了是补全部分数据（根据错误url时无法使用）
      */
     @Override
-    public Floor getDetailsByElement(Element tr) throws IOException {
+    public Floor getDetailsByElement(String fdcName, Element tr) throws IOException {
 
         Elements tds = tr.select("td");
+        String fdcFloorName = tds.eq(1).attr("title");  // 地块名称
         String fdcDetailsUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
+
+        List locationList = new ArrayList();
+        locationList.add(fdcName);
+        locationList.add(fdcFloorName);
+        progressService.addProgress(
+                "地块", "详情", 0,
+                "开始", "", locationList, null
+        );
+
         Floor floor = getDetailsByUrl(fdcDetailsUrl);
         return floor;
     }
@@ -93,7 +114,7 @@ public class FloorServiceImpl implements IFloorService {
     @Override
     public Floor getDetailsByUrl(String url) throws IOException {
 
-        Document detailedDoc = Jsoup.connect(url).get();
+        Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
         Elements trs = detailedDoc.select(".message_table tr");
 
         String name = trs.eq(1).select("td").eq(1).text();
@@ -134,14 +155,28 @@ public class FloorServiceImpl implements IFloorService {
             List<Plots> pagePlotsList = new ArrayList<Plots>();
 
             try {
+                progressService.addProgress(
+                        "单元楼", "分页", number,
+                        "开始", "", new ArrayList(), null
+                );
+
                 pagePlotsList = plotsService.getListByPage(floorDetailsUrl, number);
+
+                progressService.addProgress(
+                        "单元楼", "分页", number,
+                        "完成", "", new ArrayList(), null
+                );
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     // 判断e是超时异常，把isError设为true，表示这页数据为0是由超时异常导致的
                     isTimedOut = true;
 
-                    // 错误信息
-                    System.out.println("获取地块url["+floorDetailsUrl+"]的单元楼列表第"+number+"页超时失败："+e);
+                    String url = floorDetailsUrl.replace("show", "show_"+number);
+                    progressService.addProgress(
+                            "单元楼", "分页", number,
+                            "超时异常", url, new ArrayList(), e
+                    );
+
 
                     // 错误时外部需进行以下操作获取此楼盘楼盘第number页的列表数据
 //                    List<Plots> pagePlotsList = plotsService.getListByPage(floorDetailsUrl, number);

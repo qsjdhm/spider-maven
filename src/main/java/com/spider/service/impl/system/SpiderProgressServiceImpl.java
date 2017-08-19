@@ -50,6 +50,9 @@ public class SpiderProgressServiceImpl {
         // 1. 组织同步进度信息
         String info = "同步"+label;
         if (type.equals("分页")) {
+            for (String loaction : locationList) {
+                info += "["+loaction+"]";
+            }
             info += "第["+page+"]页数据"+state;
         } else if (type.equals("详情")) {
             for (String loaction : locationList) {
