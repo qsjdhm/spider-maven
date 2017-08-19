@@ -2,6 +2,7 @@ package com.spider.service.impl.houses;
 
 import com.spider.entity.Reb;
 import com.spider.service.houses.IRebService;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -17,6 +18,8 @@ import java.util.*;
  * 处理房产商业务功能
  */
 public class RebServiceImpl implements IRebService {
+
+    SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
 
     Logger logger = LogManager.getLogger(RebServiceImpl.class.getName());
 
@@ -40,7 +43,13 @@ public class RebServiceImpl implements IRebService {
                 try {
                     Reb reb = getDetailsByElement(tr);
                     rebList.add(reb);
-                    logger.info("抓取房产商["+reb.getName()+"]详情数据完成！");
+
+                    List locationList = new ArrayList();
+                    locationList.add(reb.getName());
+                    progressService.addProgress(
+                            "房产商", "详情", 0,
+                            "完成", "", locationList, null
+                    );
                 } catch (IOException e) {
                     if (e.toString().indexOf("Read timed out") > -1) {
                         // 错误信息
@@ -48,7 +57,13 @@ public class RebServiceImpl implements IRebService {
                         String fdcRebName = tds.eq(1).select("a").text();  // 房产商名称
                         String fdcRebUrl = "http://www.jnfdc.gov.cn/kfqy/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
 
-                        System.out.println("获取房产商名称["+fdcRebName+"]房产商url["+fdcRebUrl+"]详情数据超时出错");
+                        List locationList = new ArrayList();
+                        locationList.add(fdcRebName);
+                        progressService.addProgress(
+                                "房产商", "详情", 0,
+                                "超时异常", fdcRebUrl, locationList, e
+                        );
+
 
                         // 错误时外部需进行以下操作获取此房产商详情数据
 //                        Reb reb = getDetailsByUrl(fdcRebUrl);

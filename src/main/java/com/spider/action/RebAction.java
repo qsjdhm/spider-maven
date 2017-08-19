@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.spider.service.impl.houses.RebServiceImpl;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 
 public class RebAction {
+
+    SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
 
     RebServiceImpl rebService = new RebServiceImpl();
 
@@ -24,16 +27,26 @@ public class RebAction {
         do {
             List<Reb> pageRebList = new ArrayList<Reb>();
             try {
+                progressService.addProgress(
+                        "房产商", "分页", number,
+                        "开始", "", new ArrayList(), null
+                );
+
                 pageRebList = rebService.getListByPage(number);
-                System.out.println("第"+number+"页房产商列表----------");
-                for(Reb reb : pageRebList) {
-                    System.out.println(reb.getName());
-                }
+
+                progressService.addProgress(
+                        "房产商", "分页", number,
+                        "完毕", "", new ArrayList(), null
+                );
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    System.out.println("同步房产商第"+number+"页列表超时失败："+e);
+                    String url = "http://www.jnfdc.gov.cn/kfqy/index_"+number+".shtml";
+                    progressService.addProgress(
+                            "房产商", "分页", number,
+                            "超时异常", url, new ArrayList(), e
+                    );
                 }
                 e.printStackTrace();
             }
@@ -58,6 +71,8 @@ public class RebAction {
         // 2. 在循环过程中socket通知管理平台同步进度（包括每页同步遇到的超时异常，供管理平台进一步操作）
         // 3. 根据service抛出的超时异常、代码异常生成日志
         // 4. 根据每页数据写入数据库
+
+
     }
 
 
@@ -70,14 +85,20 @@ public class RebAction {
         try {
             rebList = rebService.getListByPage(number);
 
-            for(Reb reb : rebList) {
-                System.out.println(reb.getName());
-            }
+            progressService.addProgress(
+                    "房产商", "分页", number,
+                    "完毕", "", new ArrayList(), null
+            );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                System.out.println("同步房产商第"+number+"页列表超时失败："+e);
+
+                String url = "http://www.jnfdc.gov.cn/kfqy/index_"+number+".shtml";
+                progressService.addProgress(
+                        "房产商", "分页", number,
+                        "超时异常", url, new ArrayList(), e
+                );
             }
-            e.printStackTrace();
+            e.getStackTrace();
         }
     }
 
@@ -89,11 +110,22 @@ public class RebAction {
         try {
             Reb reb = rebService.getDetailsByUrl(url);
             System.out.println(reb.getName());
+
+            List locationList = new ArrayList();
+            locationList.add(reb.getName());
+            progressService.addProgress(
+                    "房产商", "详情", 0,
+                    "完成", "", locationList, null
+            );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                System.out.println("同步房产商url["+url+"]详情数据超时失败："+e);
+
+                progressService.addProgress(
+                        "房产商", "详情", 0,
+                        "超时异常", url, new ArrayList(), e
+                );
             }
-            e.printStackTrace();
+            e.getStackTrace();
         }
     }
 
