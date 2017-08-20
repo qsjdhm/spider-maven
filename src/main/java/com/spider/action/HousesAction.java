@@ -80,14 +80,17 @@ public class HousesAction {
      */
     public void syncListByPage(int number) {
 
-        List<Houses> housesList = new ArrayList<Houses>();
-
         try {
-            housesList = housesService.getListByPage(number);
+            progressService.addProgress(
+                    "楼盘", "分页", number,
+                    "开始", "", new ArrayList(), null
+            );
+
+            List<Houses> housesList = housesService.getListByPage(number);
 
             progressService.addProgress(
                     "楼盘", "分页", number,
-                    "完毕", "", new ArrayList(), null
+                    "完成", "", new ArrayList(), null
             );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
@@ -104,14 +107,22 @@ public class HousesAction {
 
     /**
      * 根据某一个的url同步此个楼盘的所有信息
+     * syncDetailsByUrl("中海国际社区", "http://zhonghaiguojishequ0531.fang.com")
      */
-    public void syncDetailsByUrl(String url) {
+    public void syncDetailsByUrl(String name, String url) {
+
+        Houses houses = new Houses();
+        List locationList = new ArrayList();
+        locationList.add(name);
 
         try {
-            Houses houses = housesService.getDetailsByUrl(url);
+            progressService.addProgress(
+                    "楼盘", "详情", 0,
+                    "开始", "", locationList, null
+            );
 
-            List locationList = new ArrayList();
-            locationList.add(houses.getFdcName());
+            houses = housesService.getDetailsByUrl(url);
+
             progressService.addProgress(
                     "楼盘", "详情", 0,
                     "完成", "", locationList, null
@@ -121,7 +132,7 @@ public class HousesAction {
 
                 progressService.addProgress(
                         "楼盘", "详情", 0,
-                        "超时异常", url, new ArrayList(), e
+                        "超时异常", url, locationList, e
                 );
             }
             e.printStackTrace();

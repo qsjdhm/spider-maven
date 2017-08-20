@@ -44,7 +44,9 @@ public class FloorServiceImpl implements IFloorService {
                     Floor floor = getDetailsByElement(fdcName, tr);
                     floor.setpHousesName(fdcName);
 
-                    List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floor.getFdcUrl());
+                    String floorName = floor.getName();
+                    String floorDetailsUrl = floor.getFdcUrl();
+                    List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floorName, floorDetailsUrl);
                     floor.setPlotsList(floorPlotsList);
                     floorList.add(floor);
 
@@ -144,12 +146,16 @@ public class FloorServiceImpl implements IFloorService {
      * 根据地块详情URL获取它的所有楼盘列表
      */
     @Override
-    public List<Plots> getPlotsListByFloorDetailsUrl(String floorDetailsUrl) throws IOException {
+    public List<Plots> getPlotsListByFloorDetailsUrl(String floorName, String floorDetailsUrl) throws IOException {
 
         // 此地块下的所有单元楼列表
         List<Plots> allPlotsList = new ArrayList<Plots>();
         int number = 1;
         boolean isTimedOut = false;
+
+        // 组织同步信息数据列表
+        List locationList = new ArrayList();
+        locationList.add(floorName);
 
         do {
             List<Plots> pagePlotsList = new ArrayList<Plots>();
@@ -157,14 +163,14 @@ public class FloorServiceImpl implements IFloorService {
             try {
                 progressService.addProgress(
                         "单元楼", "分页", number,
-                        "开始", "", new ArrayList(), null
+                        "开始", "", locationList, null
                 );
 
                 pagePlotsList = plotsService.getListByPage(floorDetailsUrl, number);
 
                 progressService.addProgress(
                         "单元楼", "分页", number,
-                        "完成", "", new ArrayList(), null
+                        "完成", "", locationList, null
                 );
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
@@ -174,7 +180,7 @@ public class FloorServiceImpl implements IFloorService {
                     String url = floorDetailsUrl.replace("show", "show_"+number);
                     progressService.addProgress(
                             "单元楼", "分页", number,
-                            "超时异常", url, new ArrayList(), e
+                            "超时异常", url, locationList, e
                     );
 
 

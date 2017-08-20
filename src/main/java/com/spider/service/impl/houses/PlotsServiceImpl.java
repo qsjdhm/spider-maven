@@ -56,7 +56,6 @@ public class PlotsServiceImpl implements IPlotsService {
                         String fdcPlotsName = tds.eq(1).attr("title");  // 单元楼名称
                         String fdcPlotsUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
 
-
                         List locationList = new ArrayList();
                         locationList.add(floorName);
                         locationList.add(fdcPlotsName);

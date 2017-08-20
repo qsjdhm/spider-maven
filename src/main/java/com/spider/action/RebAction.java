@@ -36,7 +36,7 @@ public class RebAction {
 
                 progressService.addProgress(
                         "房产商", "分页", number,
-                        "完毕", "", new ArrayList(), null
+                        "完成", "", new ArrayList(), null
                 );
             } catch (IOException e) {
                 if (e.toString().indexOf("Read timed out") > -1) {
@@ -83,11 +83,16 @@ public class RebAction {
 
         List<Reb> rebList = new ArrayList<Reb>();
         try {
+            progressService.addProgress(
+                    "房产商", "分页", number,
+                    "开始", "", new ArrayList(), null
+            );
+
             rebList = rebService.getListByPage(number);
 
             progressService.addProgress(
                     "房产商", "分页", number,
-                    "完毕", "", new ArrayList(), null
+                    "完成", "", new ArrayList(), null
             );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
@@ -105,14 +110,20 @@ public class RebAction {
     /**
      * 根据某一个的url同步此个房产商的所有信息
      */
-    public void syncDetailsByUrl(String url) {
+    public void syncDetailsByUrl(String name, String url) {
+
+        Reb reb = new Reb();
+        List locationList = new ArrayList();
+        locationList.add(name);
 
         try {
-            Reb reb = rebService.getDetailsByUrl(url);
-            System.out.println(reb.getName());
+            progressService.addProgress(
+                    "房产商", "详情", 0,
+                    "开始", "", locationList, null
+            );
 
-            List locationList = new ArrayList();
-            locationList.add(reb.getName());
+            reb = rebService.getDetailsByUrl(url);
+
             progressService.addProgress(
                     "房产商", "详情", 0,
                     "完成", "", locationList, null
@@ -122,7 +133,7 @@ public class RebAction {
 
                 progressService.addProgress(
                         "房产商", "详情", 0,
-                        "超时异常", url, new ArrayList(), e
+                        "超时异常", url, locationList, e
                 );
             }
             e.printStackTrace();

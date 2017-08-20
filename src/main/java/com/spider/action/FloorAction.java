@@ -16,14 +16,14 @@ public class FloorAction {
 
     /**
      * 同步地块的地块的所有信息
+     * syncAllList("中海国际")
      */
-    public void syncAllList() {
+    public void syncAllList(String housesName) {
 
         // 1. 循环调用service方法获取数据
         List<Floor> allFloorList = new ArrayList<Floor>();
         int number = 1;
         boolean isTimedOut = false;
-        String housesName = "中海国际";
 
         do {
             List<Floor> pageFloorList = new ArrayList<Floor>();
@@ -82,10 +82,10 @@ public class FloorAction {
 
     /**
      * 根据页数同步此页地块的数据列表
+     * syncListByPage("中海国际", 1)
      */
     public void syncListByPage(String fdcName, int number) {
 
-        fdcName = "中海国际";
         List<Floor> floorList = new ArrayList<Floor>();
 
         // 组织同步信息数据列表
@@ -119,23 +119,34 @@ public class FloorAction {
 
     /**
      * 根据某一个的url同步此地块的所有信息
+     * syncDetailsByUrl("绿地城", "绿地城一期住宅项目", url)
      */
-    public void syncDetailsByUrl(String url) {
+    public void syncDetailsByUrl(String fdcName, String fdcFloorName, String url) {
+
+        Floor floor = new Floor();
+        List locationList = new ArrayList();
+        locationList.add(fdcName);
+        locationList.add(fdcFloorName);
 
         try {
-//            List locationList = new ArrayList();
-//            locationList.add(fdcName);
-//            locationList.add(fdcFloorName);
-//            progressService.addProgress(
-//                    "地块", "详情", 0,
-//                    "开始", "", locationList, null
-//            );
+            progressService.addProgress(
+                    "地块", "详情", 0,
+                    "开始", "", locationList, null
+            );
 
-            Floor floor = floorService.getDetailsByUrl(url);
-            System.out.println(floor.getName());
+            floor = floorService.getDetailsByUrl(url);
+
+            progressService.addProgress(
+                    "地块", "详情", 0,
+                    "完成", "", locationList, null
+            );
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
-                System.out.println("同步地块url["+url+"]详情数据超时失败："+e);
+
+                progressService.addProgress(
+                        "地块", "详情", 0,
+                        "超时异常", url, locationList, e
+                );
             }
             e.printStackTrace();
         }

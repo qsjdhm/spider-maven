@@ -24,5 +24,5 @@ public interface IFloorService {
 
 
     // 获取此地块单元楼的接口
-    public List<Plots> getPlotsListByFloorDetailsUrl(String floorDetailsUrl) throws IOException;
+    public List<Plots> getPlotsListByFloorDetailsUrl(String floorName, String floorDetailsUrl) throws IOException;
 }

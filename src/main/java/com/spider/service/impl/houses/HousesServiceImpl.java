@@ -158,7 +158,7 @@ public class HousesServiceImpl implements IHousesService {
      * 根据楼盘名称获取它的所有地块列表
      */
     @Override
-    public List<Floor> getFloorListByHousesName(String name) throws IOException {
+    public List<Floor> getFloorListByHousesName(String fdcName) throws IOException {
         // 此楼盘下所有地块列表
         List<Floor> allFloorList = new ArrayList<Floor>();
         int number = 1;
@@ -169,7 +169,7 @@ public class HousesServiceImpl implements IHousesService {
 
             // 组织同步信息数据列表
             List locationList = new ArrayList();
-            locationList.add(name);
+            locationList.add(fdcName);
 
             try {
                 progressService.addProgress(
@@ -178,7 +178,7 @@ public class HousesServiceImpl implements IHousesService {
                 );
 
                 // 获取此楼盘的第number页数据
-                pageFloorList = floorService.getListByPage(name, number);
+                pageFloorList = floorService.getListByPage(fdcName, number);
 
                 progressService.addProgress(
                         "地块", "分页", number,
@@ -188,7 +188,7 @@ public class HousesServiceImpl implements IHousesService {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+name+"&en=";
+                    String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
                     progressService.addProgress(
                             "地块", "分页", number,
                             "超时异常", url, locationList, e

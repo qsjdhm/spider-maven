@@ -24,5 +24,5 @@ public interface IHousesService {
 
 
     // 获取此楼盘地块的接口
-    public List<Floor> getFloorListByHousesName(String name) throws IOException;
+    public List<Floor> getFloorListByHousesName(String fdcName) throws IOException;
 }
