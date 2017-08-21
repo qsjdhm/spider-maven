@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class plotsAction {
+public class PlotsAction {
 
     SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
     PlotsServiceImpl plotsService = new PlotsServiceImpl();
 
     /**
      * 同步单元楼的所有信息
-     * syncAllList("绿地城一期住宅项目", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=44ae60a6-352e-4bfb-8300-382eaa3835e4")
+     * syncAllList("中海国际社区B-2地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6")
      */
     public void syncAllList(String floorName, String floorDetailsUrl) {
 
@@ -82,7 +82,7 @@ public class plotsAction {
 
     /**
      * 根据页数同步此页单元楼的数据列表
-     * syncListByPage("绿地城一期住宅项目", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=44ae60a6-352e-4bfb-8300-382eaa3835e4")
+     * syncListByPage("中海国际社区B-2地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6", 2)
      */
     public void syncListByPage(String floorName, String floorDetailsUrl, int number) {
 
@@ -119,7 +119,7 @@ public class plotsAction {
 
     /**
      * 根据某一个的url同步此单元楼的所有信息
-     * syncDetailsByUrl("九英里颢苑", "2#楼", url)
+     * syncDetailsByUrl("中海国际社区B-2地块", "67楼", "http://www.jnfdc.gov.cn/onsaling/bshow.shtml?bno=23c5bfad-f26f-4f8f-b1db-cf15b8a9e1ac")
      */
     public void syncDetailsByUrl(String floorName, String fdcPlotsName, String url) {
 

@@ -1,11 +1,10 @@
 package com.spider.action;
 
-import com.spider.Main;
+import com.spider.entity.Floor;
 import com.spider.entity.Houses;
+import com.spider.service.impl.houses.FloorServiceImpl;
 import com.spider.service.impl.houses.HousesServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,10 +14,12 @@ public class HousesAction {
 
     SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
     HousesServiceImpl housesService = new HousesServiceImpl();
+    FloorServiceImpl floorService = new FloorServiceImpl();
 
 
     /**
      * 同步楼盘的所有信息
+     * syncAllList()
      */
     public void syncAllList() {
         // 1. 循环调用service方法获取数据
@@ -77,6 +78,7 @@ public class HousesAction {
 
     /**
      * 根据页数同步此页楼盘的数据列表
+     * syncListByPage(2)
      */
     public void syncListByPage(int number) {
 
@@ -122,6 +124,12 @@ public class HousesAction {
             );
 
             houses = housesService.getDetailsByUrl(url);
+            // 组织楼盘下潜数据
+            // 获取此楼盘的所有地块数据
+            List<Floor> housesFloorList = housesService.getFloorListByHousesName(name);
+            houses.setFloorList(housesFloorList);
+
+            System.out.println(houses.getFloorList().size());
 
             progressService.addProgress(
                     "楼盘", "详情", 0,

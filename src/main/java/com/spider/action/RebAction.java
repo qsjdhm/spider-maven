@@ -78,6 +78,7 @@ public class RebAction {
 
     /**
      * 根据页数同步此页房产商的数据列表
+     * syncListByPage(2)
      */
     public void syncListByPage(int number) {
 
@@ -109,6 +110,7 @@ public class RebAction {
 
     /**
      * 根据某一个的url同步此个房产商的所有信息
+     * syncDetailsByUrl("济南建邦置业有限公司", "http://www.jnfdc.gov.cn/kfqy/show/915c802f-f227-4cec-853d-e5161a90b0c4.shtml")
      */
     public void syncDetailsByUrl(String name, String url) {
 

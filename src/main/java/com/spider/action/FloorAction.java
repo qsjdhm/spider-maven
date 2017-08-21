@@ -1,6 +1,7 @@
 package com.spider.action;
 
 import com.spider.entity.Floor;
+import com.spider.entity.Plots;
 import com.spider.service.impl.houses.FloorServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 
@@ -16,7 +17,7 @@ public class FloorAction {
 
     /**
      * 同步地块的地块的所有信息
-     * syncAllList("中海国际")
+     * syncAllList("中海国际社区")
      */
     public void syncAllList(String housesName) {
 
@@ -82,7 +83,7 @@ public class FloorAction {
 
     /**
      * 根据页数同步此页地块的数据列表
-     * syncListByPage("中海国际", 1)
+     * syncListByPage("中海国际社区", 1)
      */
     public void syncListByPage(String fdcName, int number) {
 
@@ -119,7 +120,7 @@ public class FloorAction {
 
     /**
      * 根据某一个的url同步此地块的所有信息
-     * syncDetailsByUrl("绿地城", "绿地城一期住宅项目", url)
+     * syncDetailsByUrl("中海国际社区", "中海国际社区B-2地块", ""http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6"")
      */
     public void syncDetailsByUrl(String fdcName, String fdcFloorName, String url) {
 
@@ -135,6 +136,8 @@ public class FloorAction {
             );
 
             floor = floorService.getDetailsByUrl(url);
+            List<Plots> floorPlotsList = floorService.getPlotsListByFloorDetailsUrl(fdcFloorName, url);
+            floor.setPlotsList(floorPlotsList);
 
             progressService.addProgress(
                     "地块", "详情", 0,
