@@ -1,9 +1,6 @@
 package com.spider;
 
-import com.spider.action.PlotsAction;
-import com.spider.action.FloorAction;
-import com.spider.action.HousesAction;
-import com.spider.action.RebAction;
+import com.spider.action.*;
 
 import java.io.IOException;
 
@@ -17,6 +14,8 @@ public class Main {
         /**
          * 自动任务action调用实例
          */
+        TaskAction taskAction = new TaskAction();
+        taskAction.begin();
 
 
 
