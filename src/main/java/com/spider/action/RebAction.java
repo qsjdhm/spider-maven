@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.spider.service.impl.houses.RebServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.utils.SysConstant;
 
 public class RebAction {
 
@@ -42,7 +43,7 @@ public class RebAction {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    String url = "http://www.jnfdc.gov.cn/kfqy/index_"+number+".shtml";
+                    String url = new SysConstant().REB_LIST_URL + "/index_"+number+".shtml";
                     progressService.addProgress(
                             "房产商", "分页", number,
                             "超时异常", url, new ArrayList(), e
@@ -98,7 +99,7 @@ public class RebAction {
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
 
-                String url = "http://www.jnfdc.gov.cn/kfqy/index_"+number+".shtml";
+                String url = new SysConstant().REB_LIST_URL + "/index_"+number+".shtml";
                 progressService.addProgress(
                         "房产商", "分页", number,
                         "超时异常", url, new ArrayList(), e

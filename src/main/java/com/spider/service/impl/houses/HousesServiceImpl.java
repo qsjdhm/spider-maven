@@ -5,6 +5,7 @@ import com.spider.entity.Houses;
 import com.spider.service.houses.IHousesService;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.utils.AnalysisHouseUtil;
+import com.spider.utils.SysConstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -31,7 +32,7 @@ public class HousesServiceImpl implements IHousesService {
     @Override
     public List<Houses> getListByPage(int housesNumber) throws IOException {
 
-        String sfwUrl = "http://newhouse.jn.fang.com/house/dianshang/b9"+housesNumber;
+        String sfwUrl = new SysConstant().HOUSES_LIST_URL + "/b9"+housesNumber;
         List<Houses> housesList = new ArrayList<Houses>();
 
         Document pageDoc = Jsoup.connect(sfwUrl).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
@@ -188,7 +189,7 @@ public class HousesServiceImpl implements IHousesService {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
+                    String url = new SysConstant().FLOOR_LIST_URL + "/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
                     progressService.addProgress(
                             "地块", "分页", number,
                             "超时异常", url, locationList, e

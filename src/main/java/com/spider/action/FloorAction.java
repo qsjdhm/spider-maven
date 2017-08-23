@@ -4,6 +4,7 @@ import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.impl.houses.FloorServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.utils.SysConstant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class FloorAction {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+housesName+"&en=";
+                    String url = new SysConstant().FLOOR_LIST_URL + "/index_"+number+".shtml?zn=all&pu=all&pn="+housesName+"&en=";
                     progressService.addProgress(
                             "地块", "分页", number,
                             "超时异常", url, locationList, e
@@ -108,7 +109,7 @@ public class FloorAction {
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
 
-                String url = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
+                String url = new SysConstant().FLOOR_LIST_URL + "/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
                 progressService.addProgress(
                         "地块", "分页", number,
                         "超时异常", url, locationList, e
@@ -120,7 +121,7 @@ public class FloorAction {
 
     /**
      * 根据某一个的url同步此地块的所有信息
-     * syncDetailsByUrl("中海国际社区", "中海国际社区B-2地块", ""http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6"")
+     * syncDetailsByUrl("中海国际社区", "中海国际社区B-2地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6"")
      */
     public void syncDetailsByUrl(String fdcName, String fdcFloorName, String url) {
 

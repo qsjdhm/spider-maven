@@ -5,6 +5,7 @@ import com.spider.entity.Houses;
 import com.spider.service.impl.houses.FloorServiceImpl;
 import com.spider.service.impl.houses.HousesServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.utils.SysConstant;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class HousesAction {
                 if (e.toString().indexOf("Read timed out") > -1) {
                     isTimedOut = true;
 
-                    String url = "http://newhouse.jn.fang.com/house/dianshang/b9"+number;
+                    String url = new SysConstant().HOUSES_LIST_URL + "/b9"+number;
                     progressService.addProgress(
                             "楼盘", "分页", number,
                             "超时异常", url, new ArrayList(), e
@@ -97,7 +98,7 @@ public class HousesAction {
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
 
-                String url = "http://newhouse.jn.fang.com/house/dianshang/b9"+number;
+                String url = new SysConstant().HOUSES_LIST_URL + "/b9"+number;
                 progressService.addProgress(
                         "楼盘", "分页", number,
                         "超时异常", url, new ArrayList(), e

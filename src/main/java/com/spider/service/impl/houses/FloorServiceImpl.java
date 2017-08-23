@@ -7,6 +7,7 @@ import com.spider.entity.Plots;
 import com.spider.service.houses.IFloorService;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.utils.AnalysisHouseUtil;
+import com.spider.utils.SysConstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -31,7 +32,7 @@ public class FloorServiceImpl implements IFloorService {
     @Override
     public List<Floor> getListByPage(String fdcName, int number) throws IOException {
 
-        String fdcUrl = "http://www.jnfdc.gov.cn/onsaling/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
+        String fdcUrl = new SysConstant().FLOOR_LIST_URL + "/index_"+number+".shtml?zn=all&pu=all&pn="+fdcName+"&en=";
         List<Floor> floorList = new ArrayList<Floor>();
 
         Document pageDoc = Jsoup.connect(fdcUrl).timeout(5000).get();
@@ -62,7 +63,7 @@ public class FloorServiceImpl implements IFloorService {
                         // 错误信息
                         Elements tds = tr.select("td");
                         String fdcFloorName = tds.eq(1).attr("title");  // 地块名称
-                        String fdcFloorUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
+                        String fdcFloorUrl = new SysConstant().FLOOR_DETAILS_URL + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
 
                         List locationList = new ArrayList();
                         locationList.add(fdcName);
@@ -96,7 +97,7 @@ public class FloorServiceImpl implements IFloorService {
 
         Elements tds = tr.select("td");
         String fdcFloorName = tds.eq(1).attr("title");  // 地块名称
-        String fdcDetailsUrl = "http://www.jnfdc.gov.cn" + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
+        String fdcDetailsUrl = new SysConstant().FLOOR_DETAILS_URL + tds.eq(1).select("a").attr("href");  // 地块详情页面政府网URL
 
         List locationList = new ArrayList();
         locationList.add(fdcName);

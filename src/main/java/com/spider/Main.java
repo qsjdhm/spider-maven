@@ -14,8 +14,8 @@ public class Main {
         /**
          * 自动任务action调用实例
          */
-        TaskAction taskAction = new TaskAction();
-        taskAction.begin();
+//        TaskAction taskAction = new TaskAction();
+//        taskAction.begin();
 
 
 
@@ -31,7 +31,7 @@ public class Main {
 
 //        HousesAction housesAction = new HousesAction();
 //        housesAction.syncAllList();
-//        housesAction.syncListByPage(2);
+//        housesAction.syncListByPage(1);
 //        housesAction.syncDetailsByUrl("中海国际社区", "http://zhonghaiguojishequ0531.fang.com");
 
 

@@ -4,6 +4,7 @@ import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.houses.IPlotsService;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.utils.SysConstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -54,7 +55,7 @@ public class PlotsServiceImpl implements IPlotsService {
                         // 错误信息
                         Elements tds = tr.select("td");
                         String fdcPlotsName = tds.eq(1).attr("title");  // 单元楼名称
-                        String fdcPlotsUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
+                        String fdcPlotsUrl = new SysConstant().FLOOR_DETAILS_URL + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
 
                         List locationList = new ArrayList();
                         locationList.add(floorName);
@@ -86,7 +87,7 @@ public class PlotsServiceImpl implements IPlotsService {
 
         Elements tds = tr.select("td");
         String fdcPlotsName = tds.eq(1).attr("title");  // 单元楼名称
-        String fdcDetailsUrl = "http://www.jnfdc.gov.cn/onsaling/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
+        String fdcDetailsUrl = new SysConstant().PLOTS_DETAILS_URL + "/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
 
         List locationList = new ArrayList();
         locationList.add(floorName);

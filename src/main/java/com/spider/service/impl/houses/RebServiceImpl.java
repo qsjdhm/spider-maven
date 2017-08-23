@@ -3,6 +3,7 @@ package com.spider.service.impl.houses;
 import com.spider.entity.Reb;
 import com.spider.service.houses.IRebService;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.utils.SysConstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -28,7 +29,7 @@ public class RebServiceImpl implements IRebService {
     @Override
     public List<Reb> getListByPage(int number) throws IOException {
         List<Reb> rebList = new ArrayList<Reb>();  // 承载房产商数据集合
-        String url = "http://www.jnfdc.gov.cn/kfqy/index_"+number+".shtml";
+        String url = new SysConstant().REB_LIST_URL + "/index_"+number+".shtml";
 
         Document pageDoc = Jsoup.connect(url).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
         Elements trs = pageDoc.select(".project_table tr");
@@ -53,7 +54,7 @@ public class RebServiceImpl implements IRebService {
                         // 错误信息
                         Elements tds = tr.select("td");
                         String fdcRebName = tds.eq(1).select("a").text();  // 房产商名称
-                        String fdcRebUrl = "http://www.jnfdc.gov.cn/kfqy/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
+                        String fdcRebUrl = new SysConstant().REB_DETAILS_URL + "/" + tds.eq(1).select("a").attr("href");  // 单元楼页面政府网URL
 
                         List locationList = new ArrayList();
                         locationList.add(fdcRebName);
@@ -85,7 +86,7 @@ public class RebServiceImpl implements IRebService {
     public Reb getDetailsByElement(Element tr) throws IOException {
 
         Elements tds = tr.select("td");
-        String fdcUrl = "http://www.jnfdc.gov.cn/kfqy/" + tds.eq(1).select("a").attr("href");
+        String fdcUrl = new SysConstant().REB_DETAILS_URL + "/" + tds.eq(1).select("a").attr("href");
         String name = tds.eq(1).select("a").text();
         String qualificationId = tds.eq(3).text();
 
