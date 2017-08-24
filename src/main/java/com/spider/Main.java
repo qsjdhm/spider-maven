@@ -1,6 +1,12 @@
 package com.spider;
 
 import com.spider.action.*;
+import com.spider.dao.UserMapper;
+import com.spider.entity.User;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
 
@@ -10,6 +16,29 @@ import java.io.IOException;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
+
+
+
+        SqlSessionFactory sessionFactory;
+        sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config.xml"));
+
+        SqlSession sqlSession = sessionFactory.openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+
+        User user = userMapper.findById(1);
+        System.out.println(user);
+
+
+
+
+
+
+
+
+
+
+
 
         /**
          * 自动任务action调用实例
