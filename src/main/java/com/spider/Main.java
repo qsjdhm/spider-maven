@@ -1,14 +1,17 @@
 package com.spider;
 
 import com.spider.action.*;
-import com.spider.dao.UserMapper;
-import com.spider.entity.User;
+import com.spider.dao.RebMapper;
+import com.spider.entity.Reb;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -24,13 +27,19 @@ public class Main {
                 .build(Resources.getResourceAsReader("mybatis-config.xml"));
 
         SqlSession sqlSession = sessionFactory.openSession();
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
 
-        User user = userMapper.findById(1);
-        System.out.println(user);
+        RebAction rebAction = new RebAction();
+        List<Reb> rebList = rebAction.syncAllList();
 
+        for (Reb reb : rebList) {
+            rebMapper.insertReb(reb);
+            System.out.println(reb.getIntroduction());
+        }
+        sqlSession.commit();  // 一定要有的。
 
-
+//        Reb reb = rebMapper.findById(44);
+//        System.out.println(reb.getIntroduction());
 
 
 

@@ -19,7 +19,7 @@ public class RebAction {
     /**
      * 同步房产商的所有信息
      */
-    public void syncAllList() {
+    public List<Reb> syncAllList() {
         // 1. 循环调用service方法获取数据
         List<Reb> allRebList = new ArrayList<Reb>();
         int number = 1;
@@ -73,7 +73,7 @@ public class RebAction {
         // 3. 根据service抛出的超时异常、代码异常生成日志
         // 4. 根据每页数据写入数据库
 
-
+        return allRebList;
     }
 
 
@@ -81,7 +81,7 @@ public class RebAction {
      * 根据页数同步此页房产商的数据列表
      * syncListByPage(2)
      */
-    public void syncListByPage(int number) {
+    public List<Reb> syncListByPage(int number) {
 
         List<Reb> rebList = new ArrayList<Reb>();
         try {
@@ -107,6 +107,8 @@ public class RebAction {
             }
             e.printStackTrace();
         }
+
+        return rebList;
     }
 
     /**

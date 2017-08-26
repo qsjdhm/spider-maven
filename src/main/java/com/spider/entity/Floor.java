@@ -15,7 +15,7 @@ public class Floor {
     }
 
     private String name = null;  // 地块名称
-    private String fdcUrl = null;  // 楼盘页面政府网URL
+    private String fdcUrl = null;  // 政府网地块URL
     private String canSold = null;  // 可售套数
     private String address = null;  // 项目地址
     private String county = null;  // 所在区县

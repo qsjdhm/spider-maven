@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--这块等于dao接口的实现  namespace必须和接口的类路径一样-->
+<mapper namespace="com.spider.dao.RebMapper">
+    <select id="findById" parameterType="HashMap" resultType="com.spider.entity.Reb">
+        select
+        * from houses.reb where id=#{id}
+    </select>
+    <insert id="insertReb" parameterType="com.spider.entity.Reb" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `houses`.`reb` ( `name`, `fdcUrl`, `qualificationLevel`
+        , `qualificationId`, `LegalPerson`, `address`, `phone`, `mail`
+        , `registeredCapital`, `type`, `introduction`)
+        VALUES (#{name}, #{fdcUrl}, #{qualificationLevel}, #{qualificationId}, #{LegalPerson}
+        , #{address}, #{phone}, #{mail}, #{registeredCapital}
+        , #{type}, #{introduction})
+    </insert>
+
+</mapper>
