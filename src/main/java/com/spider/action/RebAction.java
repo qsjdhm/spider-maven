@@ -1,5 +1,6 @@
 package com.spider.action;
 
+import com.spider.dao.RebMapper;
 import com.spider.entity.Reb;
 
 import java.io.IOException;
@@ -9,6 +10,10 @@ import java.util.List;
 import com.spider.service.impl.houses.RebServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.utils.SysConstant;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 public class RebAction {
 
@@ -81,8 +86,9 @@ public class RebAction {
      * 根据页数同步此页房产商的数据列表
      * syncListByPage(2)
      */
-    public List<Reb> syncListByPage(int number) {
+    public void syncListByPage(int number) throws IOException {
 
+        // 同步获取数据
         List<Reb> rebList = new ArrayList<Reb>();
         try {
             progressService.addProgress(
@@ -108,7 +114,35 @@ public class RebAction {
             e.printStackTrace();
         }
 
-        return rebList;
+
+        // 打开数据库写数据
+        SqlSessionFactory sessionFactory;
+        sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config.xml"));
+
+        SqlSession sqlSession = sessionFactory.openSession();
+        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
+
+        for (Reb reb : rebList) {
+
+            // 对比数据是否需要更新
+            Reb findReb = rebMapper.findByName(reb.getName());
+
+            if (findReb == null) {
+                // 插入数据
+                rebMapper.insertReb(reb);
+            } else if (!reb.getAddress().equals(findReb.getAddress())) {
+                // 更新数据
+                rebMapper.updateRebByName(reb);
+            }
+        }
+        sqlSession.commit();  // 一定要有的。
+
+//        Reb reb = rebMapper.findById(44);
+//        System.out.println(reb.getIntroduction());
+
+
+
     }
 
     /**

@@ -22,25 +22,8 @@ public class Main {
 
 
 
-        SqlSessionFactory sessionFactory;
-        sessionFactory = new SqlSessionFactoryBuilder()
-                .build(Resources.getResourceAsReader("mybatis-config.xml"));
-
-        SqlSession sqlSession = sessionFactory.openSession();
-        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
-
         RebAction rebAction = new RebAction();
-        List<Reb> rebList = rebAction.syncAllList();
-
-        for (Reb reb : rebList) {
-            rebMapper.insertReb(reb);
-            System.out.println(reb.getIntroduction());
-        }
-        sqlSession.commit();  // 一定要有的。
-
-//        Reb reb = rebMapper.findById(44);
-//        System.out.println(reb.getIntroduction());
-
+        rebAction.syncListByPage(2);
 
 
 

@@ -6,6 +6,7 @@ import com.spider.entity.Reb;
  * Created by zhangyan on 17/8/26.
  */
 public interface RebMapper {
-    Reb findById(int id);
+    Reb findByName(String name);
     void insertReb(Reb reb);
+    void updateRebByName(Reb reb);
 }
