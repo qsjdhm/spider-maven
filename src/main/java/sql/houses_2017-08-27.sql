@@ -37,6 +37,7 @@ CREATE TABLE `floor` (
   `property` varchar(256) DEFAULT NULL COMMENT '物业公司',
   `pHousesId` int(11) DEFAULT NULL COMMENT '所属楼盘ID',
   `pHousesName` varchar(256) DEFAULT NULL COMMENT '所属楼盘名称',
+  `hash` varchar(10240) DEFAULT '' COMMENT 'content hash',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -57,6 +58,7 @@ CREATE TABLE `houses` (
   `averagePrice` varchar(512) DEFAULT NULL COMMENT '均价',
   `openingDate` varchar(1024) DEFAULT NULL COMMENT '开盘日期',
   `pRebName` varchar(256) DEFAULT NULL COMMENT '所属房产商名称',
+  `hash` varchar(10240) DEFAULT '' COMMENT 'content hash',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -81,6 +83,7 @@ CREATE TABLE `plots` (
   `constructionPermit` varchar(256) DEFAULT NULL COMMENT '建设工程施工许可证',
   `pFloorId` int(11) DEFAULT NULL COMMENT '所属地块ID',
   `pFloorName` varchar(256) DEFAULT NULL COMMENT '所属地块名称',
+  `hash` varchar(10240) DEFAULT '' COMMENT 'content hash',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -103,7 +106,8 @@ CREATE TABLE `reb` (
   `mail` varchar(256) DEFAULT NULL COMMENT '企业邮箱',
   `registeredCapital` varchar(256) DEFAULT NULL COMMENT '注册资金',
   `type` varchar(256) DEFAULT NULL COMMENT '企业类型',
-  `introduction` varchar(10240) DEFAULT '' COMMENT '企业简介',
+  `introduction` varchar(5120) DEFAULT '' COMMENT '企业简介',
+  `hash` varchar(5120) DEFAULT '' COMMENT 'content hash',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

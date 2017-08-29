@@ -16,10 +16,10 @@
     <insert id="insertReb" parameterType="com.spider.entity.Reb" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `houses`.`reb` ( `name`, `fdcUrl`, `qualificationLevel`
         , `qualificationId`, `LegalPerson`, `address`, `phone`, `mail`
-        , `registeredCapital`, `type`, `introduction`)
+        , `registeredCapital`, `type`, `introduction`, `hasha`)
         VALUES (#{name}, #{fdcUrl}, #{qualificationLevel}, #{qualificationId}, #{LegalPerson}
         , #{address}, #{phone}, #{mail}, #{registeredCapital}
-        , #{type}, #{introduction})
+        , #{type}, #{introduction}, #{hasha})
     </insert>
 
     <!-- 更新房产商 -->
@@ -27,7 +27,7 @@
         UPDATE houses.reb
         SET fdcUrl=#{fdcUrl}, qualificationLevel=#{qualificationLevel}, qualificationId=#{qualificationId},
          LegalPerson=#{LegalPerson}, address=#{address}, phone=#{phone}, mail=#{mail},
-          registeredCapital=#{registeredCapital}, type=#{type}, introduction=#{introduction}
+          registeredCapital=#{registeredCapital}, type=#{type}, introduction=#{introduction}, hash=#{hash}
         WHERE name=#{name}
     </update>
 

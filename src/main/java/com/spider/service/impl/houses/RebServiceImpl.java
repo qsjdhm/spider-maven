@@ -128,6 +128,7 @@ public class RebServiceImpl implements IRebService {
         String registeredCapital = trs.eq(5).select("td").eq(1).text();  // 注册资金
         String type = trs.eq(6).select("td").eq(1).text();  // 企业类型
         String introduction = trs.eq(7).select("td").eq(1).text();  // 企业简介
+        String hash = name+qualificationLevel+qualificationId+LegalPerson+address+phone+mail+registeredCapital+type+introduction;
 
         Reb reb = new Reb();
         reb.setName(name);
@@ -141,7 +142,7 @@ public class RebServiceImpl implements IRebService {
         reb.setRegisteredCapital(registeredCapital);
         reb.setType(type);
         reb.setIntroduction(introduction);
-
+        reb.setHash(hash);
         return reb;
     }
 

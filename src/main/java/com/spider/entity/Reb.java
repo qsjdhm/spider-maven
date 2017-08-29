@@ -24,7 +24,9 @@ public class Reb {
     private String registeredCapital = null;  // 注册资金
     private String type = null;  // 企业类型
     private String introduction = null;  // 企业简介
+    private String hash = null;  // 内容hash
     private List<Houses> housesList = new ArrayList<Houses>();  // 下级楼盘列表
+
 
     public String getName() {
         return name;
@@ -114,6 +116,14 @@ public class Reb {
         this.introduction = introduction;
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
     public List<Houses> getHousesList() {
         return housesList;
     }
@@ -121,4 +131,5 @@ public class Reb {
     public void setHousesList(List<Houses> housesList) {
         this.housesList = housesList;
     }
+
 }

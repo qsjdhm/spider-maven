@@ -23,7 +23,7 @@ public class Main {
 
 
         RebAction rebAction = new RebAction();
-        rebAction.syncListByPage(2);
+        rebAction.syncAllList();
 
 
 

@@ -131,7 +131,7 @@ public class RebAction {
             if (findReb == null) {
                 // 插入数据
                 rebMapper.insertReb(reb);
-            } else if (!reb.getAddress().equals(findReb.getAddress())) {
+            } else if (!reb.getHash().equals(findReb.getHash())) {
                 // 更新数据
                 rebMapper.updateRebByName(reb);
             }
