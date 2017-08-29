@@ -24,6 +24,7 @@ public class Floor {
     private String property = null;  // 物业公司
     private String pHousesId = null;  // 所属楼盘ID
     private String pHousesName = null;  // 所属楼盘名称
+    private String hash = null;  // 内容hash
     private List<Plots> plotsList = new ArrayList<Plots>();  // 下级单元楼列表
 
     public String getName() {
@@ -104,6 +105,14 @@ public class Floor {
 
     public void setpHousesName(String pHousesName) {
         this.pHousesName = pHousesName;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     public List<Plots> getPlotsList() {

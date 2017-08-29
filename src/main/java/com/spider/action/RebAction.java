@@ -24,7 +24,23 @@ public class RebAction {
     /**
      * 同步房产商的所有信息
      */
-    public List<Reb> syncAllList() {
+    public void syncAllList() {
+        // 打开数据库写数据
+        SqlSessionFactory sessionFactory = null;
+        try {
+            sessionFactory = new SqlSessionFactoryBuilder()
+                    .build(Resources.getResourceAsReader("mybatis-config.xml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        SqlSession sqlSession = sessionFactory.openSession();
+        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
+
+
+
+
+
         // 1. 循环调用service方法获取数据
         List<Reb> allRebList = new ArrayList<Reb>();
         int number = 1;
@@ -71,14 +87,30 @@ public class RebAction {
                 // 把每页的地块数据添加到全部的地块列表中
                 for(Reb reb : pageRebList) {
                     allRebList.add(reb);
+
+
+                    // 对比数据是否需要更新
+                    Reb findReb = rebMapper.findByName(reb.getName());
+
+                    if (findReb == null) {
+                        // 插入数据
+                        rebMapper.insertReb(reb);
+                    } else if (!reb.getHash().equals(findReb.getHash())) {
+                        // 更新数据
+                        rebMapper.updateReb(reb);
+                    }
                 }
             }
+
+
         } while (number > 0);
         // 2. 在循环过程中socket通知管理平台同步进度（包括每页同步遇到的超时异常，供管理平台进一步操作）
         // 3. 根据service抛出的超时异常、代码异常生成日志
         // 4. 根据每页数据写入数据库
 
-        return allRebList;
+
+
+        sqlSession.commit();  // 一定要有的。
     }
 
 
@@ -133,14 +165,10 @@ public class RebAction {
                 rebMapper.insertReb(reb);
             } else if (!reb.getHash().equals(findReb.getHash())) {
                 // 更新数据
-                rebMapper.updateRebByName(reb);
+                rebMapper.updateReb(reb);
             }
         }
         sqlSession.commit();  // 一定要有的。
-
-//        Reb reb = rebMapper.findById(44);
-//        System.out.println(reb.getIntroduction());
-
 
 
     }
@@ -149,7 +177,17 @@ public class RebAction {
      * 根据某一个的url同步此个房产商的所有信息
      * syncDetailsByUrl("济南建邦置业有限公司", "http://www.jnfdc.gov.cn/kfqy/show/915c802f-f227-4cec-853d-e5161a90b0c4.shtml")
      */
-    public void syncDetailsByUrl(String name, String url) {
+    public void syncDetailsByUrl(String name, String url) throws IOException {
+
+        // 打开数据库写数据
+        SqlSessionFactory sessionFactory;
+        sessionFactory = new SqlSessionFactoryBuilder()
+                .build(Resources.getResourceAsReader("mybatis-config.xml"));
+
+        SqlSession sqlSession = sessionFactory.openSession();
+        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
+
+
 
         Reb reb = new Reb();
         List locationList = new ArrayList();
@@ -167,6 +205,21 @@ public class RebAction {
                     "房产商", "详情", 0,
                     "完成", "", locationList, null
             );
+
+
+
+            // 对比数据是否需要更新
+            Reb findReb = rebMapper.findByName(reb.getName());
+
+            if (findReb == null) {
+                // 插入数据
+                rebMapper.insertReb(reb);
+            } else if (!reb.getHash().equals(findReb.getHash())) {
+                // 更新数据
+                rebMapper.updateReb(reb);
+            }
+
+
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
 
@@ -177,6 +230,8 @@ public class RebAction {
             }
             e.printStackTrace();
         }
+
+        sqlSession.commit();  // 一定要有的。
     }
 
 }

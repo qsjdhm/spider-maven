@@ -8,5 +8,5 @@ import com.spider.entity.Reb;
 public interface RebMapper {
     Reb findByName(String name);
     void insertReb(Reb reb);
-    void updateRebByName(Reb reb);
+    void updateReb(Reb reb);
 }

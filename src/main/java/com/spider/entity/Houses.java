@@ -22,6 +22,7 @@ public class Houses {
     private String averagePrice = null;  // 均价
     private String openingDate = null;  // 开盘日期
     private String pRebName = null;  // 所属房产商名称
+    private String hash = null;  // 内容hash
     private List<Floor> floorList = new ArrayList<Floor>();  // 下级地块列表
 
     public String getName() {
@@ -86,6 +87,14 @@ public class Houses {
 
     public void setpRebName(String pRebName) {
         this.pRebName = pRebName;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     public List<Floor> getFloorList() {

@@ -24,6 +24,7 @@ public class Plots {
     private String constructionPermit = null;  // 建设工程施工许可证
     private String pFloorId = null;  // 所属地块ID
     private String pFloorName = null;  // 所属地块名称
+    private String hash = null;  // 内容hash
 
     public String getName() {
         return name;
@@ -119,5 +120,13 @@ public class Plots {
 
     public void setpFloorName(String pFloorName) {
         this.pFloorName = pFloorName;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 }

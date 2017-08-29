@@ -8,8 +8,8 @@
 
     <!-- 根据名称获取房产商 -->
     <select id="findByName" parameterType="String" resultType="com.spider.entity.Reb">
-        select
-        * from houses.reb where name=#{name}
+        select name, hash
+        from houses.reb where name=#{name}
     </select>
 
     <!-- 插入房产商 -->
