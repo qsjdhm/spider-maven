@@ -3,6 +3,7 @@ package com.spider;
 import com.spider.action.*;
 import com.spider.dao.RebMapper;
 import com.spider.entity.Reb;
+import com.spider.service.impl.system.SqlServiceImpl;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -22,9 +23,9 @@ public class Main {
 
 
 
+
         RebAction rebAction = new RebAction();
         rebAction.syncAllList();
-
 
 
 

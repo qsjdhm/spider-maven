@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.spider.service.impl.houses.RebServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.service.impl.system.SqlServiceImpl;
 import com.spider.utils.SysConstant;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -18,27 +19,13 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 public class RebAction {
 
     SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
-
+    SqlServiceImpl sqlService = new SqlServiceImpl();
     RebServiceImpl rebService = new RebServiceImpl();
 
     /**
      * 同步房产商的所有信息
      */
     public void syncAllList() {
-        // 打开数据库写数据
-        SqlSessionFactory sessionFactory = null;
-        try {
-            sessionFactory = new SqlSessionFactoryBuilder()
-                    .build(Resources.getResourceAsReader("mybatis-config.xml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        SqlSession sqlSession = sessionFactory.openSession();
-        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
-
-
-
 
 
         // 1. 循环调用service方法获取数据
@@ -88,18 +75,20 @@ public class RebAction {
                 for(Reb reb : pageRebList) {
                     allRebList.add(reb);
 
-
                     // 对比数据是否需要更新
-                    Reb findReb = rebMapper.findByName(reb.getName());
+                    Reb findReb = sqlService.rebSql().findByName(reb.getName());
 
                     if (findReb == null) {
                         // 插入数据
-                        rebMapper.insertReb(reb);
+                        sqlService.rebSql().insertReb(reb);
                     } else if (!reb.getHash().equals(findReb.getHash())) {
                         // 更新数据
-                        rebMapper.updateReb(reb);
+                        sqlService.rebSql().updateReb(reb);
                     }
                 }
+
+                // 每一页数据就提交到数据库保存起来
+                sqlService.comment();
             }
 
 
@@ -107,10 +96,6 @@ public class RebAction {
         // 2. 在循环过程中socket通知管理平台同步进度（包括每页同步遇到的超时异常，供管理平台进一步操作）
         // 3. 根据service抛出的超时异常、代码异常生成日志
         // 4. 根据每页数据写入数据库
-
-
-
-        sqlSession.commit();  // 一定要有的。
     }
 
 
@@ -130,6 +115,23 @@ public class RebAction {
 
             rebList = rebService.getListByPage(number);
 
+            // 把每页的地块数据添加到全部的地块列表中
+            for(Reb reb : rebList) {
+                // 对比数据是否需要更新
+                Reb findReb = sqlService.rebSql().findByName(reb.getName());
+
+                if (findReb == null) {
+                    // 插入数据
+                    sqlService.rebSql().insertReb(reb);
+                } else if (!reb.getHash().equals(findReb.getHash())) {
+                    // 更新数据
+                    sqlService.rebSql().updateReb(reb);
+                }
+            }
+
+            // 每一页数据就提交到数据库保存起来
+            sqlService.comment();
+
             progressService.addProgress(
                     "房产商", "分页", number,
                     "完成", "", new ArrayList(), null
@@ -145,32 +147,6 @@ public class RebAction {
             }
             e.printStackTrace();
         }
-
-
-        // 打开数据库写数据
-        SqlSessionFactory sessionFactory;
-        sessionFactory = new SqlSessionFactoryBuilder()
-                .build(Resources.getResourceAsReader("mybatis-config.xml"));
-
-        SqlSession sqlSession = sessionFactory.openSession();
-        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
-
-        for (Reb reb : rebList) {
-
-            // 对比数据是否需要更新
-            Reb findReb = rebMapper.findByName(reb.getName());
-
-            if (findReb == null) {
-                // 插入数据
-                rebMapper.insertReb(reb);
-            } else if (!reb.getHash().equals(findReb.getHash())) {
-                // 更新数据
-                rebMapper.updateReb(reb);
-            }
-        }
-        sqlSession.commit();  // 一定要有的。
-
-
     }
 
     /**
@@ -179,13 +155,6 @@ public class RebAction {
      */
     public void syncDetailsByUrl(String name, String url) throws IOException {
 
-        // 打开数据库写数据
-        SqlSessionFactory sessionFactory;
-        sessionFactory = new SqlSessionFactoryBuilder()
-                .build(Resources.getResourceAsReader("mybatis-config.xml"));
-
-        SqlSession sqlSession = sessionFactory.openSession();
-        RebMapper rebMapper = sqlSession.getMapper(RebMapper.class);
 
 
 
@@ -207,19 +176,19 @@ public class RebAction {
             );
 
 
-
             // 对比数据是否需要更新
-            Reb findReb = rebMapper.findByName(reb.getName());
+            Reb findReb = sqlService.rebSql().findByName(reb.getName());
 
             if (findReb == null) {
                 // 插入数据
-                rebMapper.insertReb(reb);
+                sqlService.rebSql().insertReb(reb);
             } else if (!reb.getHash().equals(findReb.getHash())) {
                 // 更新数据
-                rebMapper.updateReb(reb);
+                sqlService.rebSql().updateReb(reb);
             }
 
-
+            // 提交到数据库保存起来
+            sqlService.comment();
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
 
@@ -230,8 +199,5 @@ public class RebAction {
             }
             e.printStackTrace();
         }
-
-        sqlSession.commit();  // 一定要有的。
     }
-
 }
