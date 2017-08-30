@@ -16,5 +16,8 @@
     </environments>
     <mappers>
         <mapper resource="com/spider/mapper/RebMapper.xml"/>
+        <mapper resource="com/spider/mapper/HousesMapper.xml"/>
+        <mapper resource="com/spider/mapper/FloorMapper.xml"/>
+        <mapper resource="com/spider/mapper/PlotsMapper.xml"/>
     </mappers>
 </configuration>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 这块等于dao接口的实现  namespace必须和接口的类路径一样 -->
+<mapper namespace="com.spider.dao.FloorMapper">
+
+    <!-- 根据名称获取地块 -->
+    <select id="findByName" parameterType="String" resultType="com.spider.entity.Floor">
+        select name, hash
+        from houses.floor where name=#{name}
+    </select>
+
+    <!-- 根据楼盘名称获取地块列表 -->
+    <select id="findByHousesName" parameterType="String" resultType="com.spider.entity.Floor">
+        select name, hash
+        from houses.floor where pHousesName=#{name}
+    </select>
+
+    <!-- 插入地块 -->
+    <insert id="insertFloor" parameterType="com.spider.entity.Floor" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `houses`.`floor` ( `name`, `fdcUrl`, `canSold`
+        , `address`, `county`, `scale`, `totalPlotsNumber`, `property`
+        , `pHousesId`, `pHousesName`, `hash`)
+        VALUES (#{name}, #{fdcUrl}, #{canSold}, #{address}, #{county}
+        , #{scale}, #{totalPlotsNumber}, #{property}, #{pHousesId}
+        , #{pHousesName}, #{hash})
+    </insert>
+
+    <!-- 更新地块 -->
+    <update id="updateFloor" parameterType="com.spider.entity.Floor">
+        UPDATE houses.floor
+        SET fdcUrl=#{fdcUrl}, canSold=#{canSold}, address=#{address}, county=#{county},
+         scale=#{scale}, totalPlotsNumber=#{totalPlotsNumber}, property=#{property},
+         pHousesId=#{pHousesId}, pHousesName=#{pHousesName}, hash=#{hash}
+        WHERE name=#{name}
+    </update>
+
+</mapper>
