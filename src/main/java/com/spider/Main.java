@@ -23,11 +23,8 @@ public class Main {
 
 
 
-
-        RebAction rebAction = new RebAction();
-        rebAction.syncAllList();
-
-
+        HousesAction housesAction = new HousesAction();
+        housesAction.syncListByPage(1);
 
 
 

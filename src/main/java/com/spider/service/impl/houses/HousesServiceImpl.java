@@ -117,6 +117,7 @@ public class HousesServiceImpl implements IHousesService {
 
         String sfwUrl = url;
         String name = null;
+        String fdcName = null;
         String cover = null;
         String address = null;
         String averagePrice = null;
@@ -142,15 +143,17 @@ public class HousesServiceImpl implements IHousesService {
             pRebName = detailedDoc.select("#txt_developer").attr("value").trim();
         }
 
+        fdcName = AnalysisHouseUtil.extractValidHousesName(name);
         Houses houses = new Houses();
         houses.setName(name);
-        houses.setFdcName(AnalysisHouseUtil.extractValidHousesName(name));
+        houses.setFdcName(fdcName);
         houses.setSfwUrl(sfwUrl);
         houses.setCover(cover);
         houses.setAddress(address);
         houses.setAveragePrice(averagePrice);
         houses.setOpeningDate(openingDate);
         houses.setpRebName(pRebName);
+        houses.setHash(name+fdcName+sfwUrl+cover+address+averagePrice+openingDate+pRebName);
 
         return houses;
     }

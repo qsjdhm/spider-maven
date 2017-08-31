@@ -15,7 +15,7 @@
     <!-- 插入楼盘 -->
     <insert id="insertHouses" parameterType="com.spider.entity.Houses" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `houses`.`houses` ( `name`, `fdcName`, `sfwUrl`
-        , `cover`, `address`, `averagePrice`, `openingDate`, `pRebName, `hash`)
+        , `cover`, `address`, `averagePrice`, `openingDate`, `pRebName`, `hash`)
         VALUES (#{name}, #{fdcName}, #{sfwUrl}, #{cover}, #{address}
         , #{averagePrice}, #{openingDate}, #{pRebName}, #{hash})
     </insert>

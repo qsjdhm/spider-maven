@@ -47,8 +47,8 @@ public class FloorServiceImpl implements IFloorService {
 
                     String floorName = floor.getName();
                     String floorDetailsUrl = floor.getFdcUrl();
-                    List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floorName, floorDetailsUrl);
-                    floor.setPlotsList(floorPlotsList);
+//                    List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floorName, floorDetailsUrl);
+//                    floor.setPlotsList(floorPlotsList);
                     floorList.add(floor);
 
                     List locationList = new ArrayList();
@@ -138,6 +138,7 @@ public class FloorServiceImpl implements IFloorService {
         floor.setScale(scale);
         floor.setTotalPlotsNumber(totalPlotsNumber);
         floor.setProperty(property);
+        floor.setHash(name+fdcUrl+canSold+address+county+scale+totalPlotsNumber+property);
 
         return floor;
     }

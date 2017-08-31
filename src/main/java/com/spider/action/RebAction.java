@@ -115,7 +115,6 @@ public class RebAction {
 
             rebList = rebService.getListByPage(number);
 
-            // 把每页的地块数据添加到全部的地块列表中
             for(Reb reb : rebList) {
                 // 对比数据是否需要更新
                 Reb findReb = sqlService.rebSql().findByName(reb.getName());
@@ -154,9 +153,6 @@ public class RebAction {
      * syncDetailsByUrl("济南建邦置业有限公司", "http://www.jnfdc.gov.cn/kfqy/show/915c802f-f227-4cec-853d-e5161a90b0c4.shtml")
      */
     public void syncDetailsByUrl(String name, String url) throws IOException {
-
-
-
 
         Reb reb = new Reb();
         List locationList = new ArrayList();
