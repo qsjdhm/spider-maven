@@ -18,6 +18,7 @@ import java.io.IOException;
  */
 public class SqlServiceImpl {
 
+    static SqlSessionFactory sessionFactory = null;
     static SqlSession sqlSession = null;
 
     static RebMapper rebMapper = null;
@@ -27,22 +28,24 @@ public class SqlServiceImpl {
 
 
     public SqlServiceImpl() {
-        // 打开数据库
-        SqlSessionFactory sessionFactory = null;
-        try {
-            sessionFactory = new SqlSessionFactoryBuilder()
-                    .build(Resources.getResourceAsReader("mybatis-config.xml"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        // 加个if  判断sessionFactory是不是已经存在，如果存在不进行初始化，不存在初始化
+        if (sessionFactory == null) {
+            // 打开数据库
+            try {
+                sessionFactory = new SqlSessionFactoryBuilder()
+                        .build(Resources.getResourceAsReader("mybatis-config.xml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            sqlSession = sessionFactory.openSession();
+
+            // 实例化映射关系
+            rebMapper = sqlSession.getMapper(RebMapper.class);
+            housesMapper = sqlSession.getMapper(HousesMapper.class);
+            floorMapper = sqlSession.getMapper(FloorMapper.class);
+            plotsMapper = sqlSession.getMapper(PlotsMapper.class);
         }
-
-        sqlSession = sessionFactory.openSession();
-
-        // 实例化映射关系
-        rebMapper = sqlSession.getMapper(RebMapper.class);
-        housesMapper = sqlSession.getMapper(HousesMapper.class);
-        floorMapper = sqlSession.getMapper(FloorMapper.class);
-        plotsMapper = sqlSession.getMapper(PlotsMapper.class);
     }
 
 
