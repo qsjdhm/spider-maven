@@ -47,8 +47,8 @@ public class FloorServiceImpl implements IFloorService {
 
                     String floorName = floor.getName();
                     String floorDetailsUrl = floor.getFdcUrl();
-//                    List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floorName, floorDetailsUrl);
-//                    floor.setPlotsList(floorPlotsList);
+                    List<Plots> floorPlotsList = getPlotsListByFloorDetailsUrl(floorName, floorDetailsUrl);
+                    floor.setPlotsList(floorPlotsList);
                     floorList.add(floor);
 
                     List locationList = new ArrayList();

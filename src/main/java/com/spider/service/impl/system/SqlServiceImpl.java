@@ -5,12 +5,17 @@ import com.spider.dao.FloorMapper;
 import com.spider.dao.HousesMapper;
 import com.spider.dao.PlotsMapper;
 import com.spider.dao.RebMapper;
+import com.spider.entity.Floor;
+import com.spider.entity.Houses;
+import com.spider.entity.Plots;
+import com.spider.entity.Reb;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by zhangyan on 2017/8/30.
@@ -66,6 +71,73 @@ public class SqlServiceImpl {
     }
 
     public static void comment() {
+        sqlSession.commit();
+    }
+
+
+    // 更新房产商的数据
+    public static void updateRebList (List<Reb> rebList) {
+        for (Reb reb : rebList) {
+
+            // 对比数据是否需要更新
+            Reb findReb = rebMapper.findByName(reb.getName());
+
+            if (findReb == null) {
+                rebMapper.insertReb(reb);
+            } else if (!reb.getHash().equals(findReb.getHash())) {
+                rebMapper.updateReb(reb);
+            }
+        }
+
+        // 每一页数据就提交到数据库保存起来
+        sqlSession.commit();
+    }
+
+    // 更新楼盘的数据
+    public static void updateHouses (Houses houses) {
+        // 对比数据是否需要更新
+        Houses findHouses = housesMapper.findByName(houses.getName());
+
+        if (findHouses == null) {
+            housesMapper.insertHouses(houses);
+        } else if (!houses.getHash().equals(findHouses.getHash())) {
+            housesMapper.updateHouses(houses);
+        }
+
+        // 每一条数据就提交到数据库保存起来
+        sqlSession.commit();
+    }
+
+    // 更新地块的数据
+    public static void updateFloor (Floor floor) {
+        // 对比数据是否需要更新
+        Floor findFloor = floorMapper.findByName(floor.getName());
+
+        if (findFloor == null) {
+            floorMapper.insertFloor(floor);
+        } else if (!floor.getHash().equals(findFloor.getHash())) {
+            floorMapper.updateFloor(floor);
+        }
+
+        // 每一条数据就提交到数据库保存起来
+        sqlSession.commit();
+    }
+
+    // 更新单元楼列表的数据
+    public static void updatePlotsList (List<Plots> plotsList) {
+        for (Plots plots : plotsList) {
+
+            // 对比数据是否需要更新
+            Plots findPlots = plotsMapper.findByName(plots.getName());
+
+            if (findPlots == null) {
+                plotsMapper.insertPlots(plots);
+            } else if (!plots.getHash().equals(findPlots.getHash())) {
+                plotsMapper.updatePlots(plots);
+            }
+        }
+
+        // 每一页数据就提交到数据库保存起来
         sqlSession.commit();
     }
 

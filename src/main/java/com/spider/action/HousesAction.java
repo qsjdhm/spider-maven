@@ -2,6 +2,7 @@ package com.spider.action;
 
 import com.spider.entity.Floor;
 import com.spider.entity.Houses;
+import com.spider.entity.Plots;
 import com.spider.service.impl.houses.FloorServiceImpl;
 import com.spider.service.impl.houses.HousesServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
@@ -68,24 +69,23 @@ public class HousesAction {
                 }
             } else {
                 number++;
-                // 把每页的地块数据添加到全部的地块列表中
+
                 for(Houses houses : pageHousesList) {
                     allHousesList.add(houses);
 
-                    // 对比数据是否需要更新
-                    Houses findHouses = sqlService.housesSql().findByName(houses.getName());
+                    // 存储单个楼盘数据
+                    sqlService.updateHouses(houses);
 
-                    if (findHouses == null) {
-                        // 插入数据
-                        sqlService.housesSql().insertHouses(houses);
-                    } else if (!houses.getHash().equals(findHouses.getHash())) {
-                        // 更新数据
-                        sqlService.housesSql().updateHouses(houses);
+                    // 存储此楼盘单个地块的数据
+                    List<Floor> housesFloorList = houses.getFloorList();
+                    for(Floor floor : housesFloorList) {
+                        sqlService.updateFloor(floor);
+
+                        // 存储此地块的单元楼列表数据
+                        List<Plots> floorPlotsList = floor.getPlotsList();
+                        sqlService.updatePlotsList(floorPlotsList);
                     }
                 }
-
-                // 每一页数据就提交到数据库保存起来
-                sqlService.comment();
             }
         } while (number > 0);
         // 2. 在循环过程中socket通知管理平台同步进度（包括每页同步遇到的超时异常，供管理平台进一步操作）
@@ -107,51 +107,20 @@ public class HousesAction {
 
             List<Houses> housesList = housesService.getListByPage(number);
 
-            /**
-             * 存储楼盘信息
-             */
             for(Houses houses : housesList) {
-                // 对比数据是否需要更新
-                Houses findHouses = sqlService.housesSql().findByName(houses.getName());
+                // 存储单个楼盘数据
+                sqlService.updateHouses(houses);
 
-                if (findHouses == null) {
-                    // 插入数据
-                    sqlService.housesSql().insertHouses(houses);
-                } else if (!houses.getHash().equals(findHouses.getHash())) {
-                    // 更新数据
-                    sqlService.housesSql().updateHouses(houses);
-                }
-
-
-                /**
-                 * 存储此楼盘的地块信息
-                 */
+                // 存储此楼盘单个地块的数据
                 List<Floor> housesFloorList = houses.getFloorList();
-                // 把每页的地块数据添加到全部的地块列表中
                 for(Floor floor : housesFloorList) {
+                    sqlService.updateFloor(floor);
 
-                    // 对比数据是否需要更新
-                    Floor findFloor = sqlService.floorSql().findByName(floor.getName());
-
-                    if (findFloor == null) {
-                        // 插入数据
-                        sqlService.floorSql().insertFloor(floor);
-                    } else if (!floor.getHash().equals(findFloor.getHash())) {
-                        // 更新数据
-                        sqlService.floorSql().updateFloor(floor);
-                    }
+                    // 存储此地块的单元楼列表数据
+                    List<Plots> floorPlotsList = floor.getPlotsList();
+                    sqlService.updatePlotsList(floorPlotsList);
                 }
-
-                // 每一页数据就提交到数据库保存起来
-                sqlService.comment();
             }
-
-            // 每一页数据就提交到数据库保存起来
-            sqlService.comment();
-
-
-
-
 
 
             progressService.addProgress(
@@ -188,57 +157,27 @@ public class HousesAction {
             );
 
             houses = housesService.getDetailsByUrl(url);
-            // 组织楼盘下潜数据
-            // 获取此楼盘的所有地块数据
+            // 因为上面只是获取单个楼盘数据，所以需要单独调用下潜的地块数据，并且在获取地块数据接口中，有获取单元楼列表逻辑
+            // 所以这里不需要单独获取单元楼数据
             List<Floor> housesFloorList = housesService.getFloorListByHousesName(name);
             houses.setFloorList(housesFloorList);
 
 
-            /**
-             * 存储楼盘信息
-             */
-            // 对比数据是否需要更新
-            Houses findHouses = sqlService.housesSql().findByName(houses.getName());
+            // 存储到数据库
+            List<Houses> housesList = new ArrayList<Houses>();
+            housesList.add(houses);
+            // 存储单个楼盘数据
+            sqlService.updateHouses(houses);
 
-            if (findHouses == null) {
-                // 插入数据
-                sqlService.housesSql().insertHouses(houses);
-            } else if (!houses.getHash().equals(findHouses.getHash())) {
-                // 更新数据
-                sqlService.housesSql().updateHouses(houses);
-            }
-
-            sqlService.comment();
-
-
-            /**
-             * 存储此楼盘的地块信息
-             */
-            // 把每页的地块数据添加到全部的地块列表中
+            // 存储此楼盘单个地块的数据
             for(Floor floor : housesFloorList) {
+                sqlService.updateFloor(floor);
 
-                // 对比数据是否需要更新
-                Floor findFloor = sqlService.floorSql().findByName(floor.getName());
-
-                if (findFloor == null) {
-                    // 插入数据
-                    sqlService.floorSql().insertFloor(floor);
-                } else if (!floor.getHash().equals(findFloor.getHash())) {
-                    // 更新数据
-                    sqlService.floorSql().updateFloor(floor);
-                }
+                // 存储此地块的单元楼列表数据
+                List<Plots> floorPlotsList = floor.getPlotsList();
+                sqlService.updatePlotsList(floorPlotsList);
             }
 
-            // 每一页数据就提交到数据库保存起来
-            sqlService.comment();
-
-
-
-
-
-            /**
-             * 存储此楼盘的单元楼信息
-             */
 
             progressService.addProgress(
                     "楼盘", "详情", 0,

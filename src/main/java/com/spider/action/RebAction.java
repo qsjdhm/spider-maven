@@ -74,21 +74,10 @@ public class RebAction {
                 // 把每页的地块数据添加到全部的地块列表中
                 for(Reb reb : pageRebList) {
                     allRebList.add(reb);
-
-                    // 对比数据是否需要更新
-                    Reb findReb = sqlService.rebSql().findByName(reb.getName());
-
-                    if (findReb == null) {
-                        // 插入数据
-                        sqlService.rebSql().insertReb(reb);
-                    } else if (!reb.getHash().equals(findReb.getHash())) {
-                        // 更新数据
-                        sqlService.rebSql().updateReb(reb);
-                    }
                 }
 
-                // 每一页数据就提交到数据库保存起来
-                sqlService.comment();
+                // 向数据库同步房产商数据
+                sqlService.updateRebList(pageRebList);
             }
 
 
@@ -115,21 +104,8 @@ public class RebAction {
 
             rebList = rebService.getListByPage(number);
 
-            for(Reb reb : rebList) {
-                // 对比数据是否需要更新
-                Reb findReb = sqlService.rebSql().findByName(reb.getName());
-
-                if (findReb == null) {
-                    // 插入数据
-                    sqlService.rebSql().insertReb(reb);
-                } else if (!reb.getHash().equals(findReb.getHash())) {
-                    // 更新数据
-                    sqlService.rebSql().updateReb(reb);
-                }
-            }
-
-            // 每一页数据就提交到数据库保存起来
-            sqlService.comment();
+            // 向数据库同步房产商数据
+            sqlService.updateRebList(rebList);
 
             progressService.addProgress(
                     "房产商", "分页", number,
@@ -171,20 +147,11 @@ public class RebAction {
                     "完成", "", locationList, null
             );
 
+            List<Reb> rebList = new ArrayList<Reb>();
+            rebList.add(reb);
+            // 向数据库同步房产商数据
+            sqlService.updateRebList(rebList);
 
-            // 对比数据是否需要更新
-            Reb findReb = sqlService.rebSql().findByName(reb.getName());
-
-            if (findReb == null) {
-                // 插入数据
-                sqlService.rebSql().insertReb(reb);
-            } else if (!reb.getHash().equals(findReb.getHash())) {
-                // 更新数据
-                sqlService.rebSql().updateReb(reb);
-            }
-
-            // 提交到数据库保存起来
-            sqlService.comment();
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {
 
