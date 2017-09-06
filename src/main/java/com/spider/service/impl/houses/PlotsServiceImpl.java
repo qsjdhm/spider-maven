@@ -98,7 +98,7 @@ public class PlotsServiceImpl implements IPlotsService {
         );
 
         Plots plots = getDetailsByUrl(fdcDetailsUrl);
-        plots.setName(fdcPlotsName);
+        //plots.setName(fdcPlotsName);
         return plots;
     }
 
@@ -122,7 +122,7 @@ public class PlotsServiceImpl implements IPlotsService {
         String landUseCertificate = trs.eq(7).select("td").eq(3).text();  // 国有土地使用证
         String planningPermit = trs.eq(8).select("td").eq(1).text();  // 建设工程规划许可证
         String constructionPermit = trs.eq(8).select("td").eq(3).text();  // 建设工程施工许可证
-
+        String hash = name+fdcUrl+area+decoration+use+mortgage+salePermit+landUseCertificate+planningPermit+constructionPermit;
 
         Plots plots = new Plots();
         plots.setName(name);
@@ -135,6 +135,7 @@ public class PlotsServiceImpl implements IPlotsService {
         plots.setLandUseCertificate(landUseCertificate);
         plots.setPlanningPermit(planningPermit);
         plots.setConstructionPermit(constructionPermit);
+        plots.setHash(hash);
 
         return plots;
     }
