@@ -9,4 +9,8 @@ public interface RebMapper {
     Reb findByName(String name);
     void insertReb(Reb reb);
     void updateReb(Reb reb);
+
+    Reb select();
+    void insert();
+    void update();
 }

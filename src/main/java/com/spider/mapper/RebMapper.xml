@@ -31,4 +31,35 @@
         WHERE name=#{name}
     </update>
 
+
+    <resultMap id="rebResult" type="com.spider.entity.Reb">
+        <result property="name" column="name"/>
+        <result property="fdcUrl" column="fdcUrl"/>
+        <result property="qualificationLevel" column="qualificationLevel"/>
+        <result property="qualificationId" column="qualificationId"/>
+        <result property="LegalPerson" column="LegalPerson"/>
+        <result property="address" column="address"/>
+        <result property="phone" column="phone"/>
+        <result property="mail" column="mail"/>
+        <result property="registeredCapital" column="registeredCapital"/>
+        <result property="type" column="type"/>
+        <result property="introduction" column="introduction"/>
+        <result property="hash" column="hash"/>
+    </resultMap>
+
+
+    <select id="select" parameterType="HashMap" resultMap="rebResult" resultType="com.spider.entity.Reb">
+        select name, hash
+        from houses.reb REB
+        where 1 = 1
+        <if test="name != null">
+            and REB.name=#{name}
+        </if>
+        <if test="hash != null">
+            and REB.hash=#{hash}
+        </if>
+    </select>
+
+
+
 </mapper>

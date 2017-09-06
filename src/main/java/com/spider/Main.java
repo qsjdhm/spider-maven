@@ -28,7 +28,7 @@ public class Main {
         HousesAction housesAction = new HousesAction();
         housesAction.syncDetailsByUrl("中海国际社区", "http://zhonghaiguojishequ0531.fang.com");
 
-
+// http://www.cnblogs.com/myitroad/p/5516963.html
 
 
         /**
