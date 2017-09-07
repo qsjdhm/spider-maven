@@ -47,7 +47,6 @@
         <result property="hash" column="hash"/>
     </resultMap>
 
-
     <select id="select" parameterType="Map" resultMap="rebResult" resultType="com.spider.entity.Reb">
         select name, hash
         from houses.reb REB
@@ -63,6 +62,62 @@
         </if>
     </select>
 
+
+    <sql id="insertKey">
+        <trim suffixOverrides=",">
+            <if test="name!=null"> name, </if>
+            <if test="fdcUrl!=null"> fdcUrl, </if>
+            <if test="qualificationLevel!=null"> qualificationLevel, </if>
+            <if test="qualificationId!=null"> qualificationId, </if>
+            <if test="legalPerson!=null"> legalPerson, </if>
+            <if test="address!=null"> address, </if>
+            <if test="phone!=null"> phone, </if>
+            <if test="mail!=null"> mail, </if>
+            <if test="registeredCapital!=null"> registeredCapital, </if>
+            <if test="type!=null"> type, </if>
+            <if test="introduction!=null"> introduction, </if>
+            <if test="hash!=null"> hash, </if>
+        </trim>
+    </sql>
+    <sql id="insertValue">
+        <trim suffixOverrides=",">
+            <if test="name!=null"> #{name}, </if>
+            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
+            <if test="qualificationLevel!=null"> #{qualificationLevel}, </if>
+            <if test="qualificationId!=null"> #{qualificationId}, </if>
+            <if test="legalPerson!=null"> #{legalPerson}, </if>
+            <if test="address!=null"> #{address}, </if>
+            <if test="phone!=null"> #{phone}, </if>
+            <if test="mail!=null"> #{mail}, </if>
+            <if test="registeredCapital!=null"> #{registeredCapital}, </if>
+            <if test="type!=null"> #{type}, </if>
+            <if test="introduction!=null"> #{introduction}, </if>
+            <if test="hash!=null"> #{hash}, </if>
+        </trim>
+    </sql>
+
+    <insert id="insert" parameterType="com.spider.entity.Reb" useGeneratedKeys="true" keyProperty="id">
+        insert into houses.reb (<include refid="insertKey"/>) values(<include refid="insertValue"/>);
+    </insert>
+
+
+    <update id="update" parameterType="com.spider.entity.Reb">
+        update houses.reb
+        <set>
+            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
+            <if test="qualificationLevel!=null"> #{qualificationLevel}, </if>
+            <if test="qualificationId!=null"> #{qualificationId}, </if>
+            <if test="legalPerson!=null"> #{legalPerson}, </if>
+            <if test="address!=null"> #{address}, </if>
+            <if test="phone!=null"> #{phone}, </if>
+            <if test="mail!=null"> #{mail}, </if>
+            <if test="registeredCapital!=null"> #{registeredCapital}, </if>
+            <if test="type!=null"> #{type}, </if>
+            <if test="introduction!=null"> #{introduction}, </if>
+            <if test="hash!=null"> #{hash}, </if>
+        </set>
+        where name = #{name}
+    </update>
 
 
 </mapper>

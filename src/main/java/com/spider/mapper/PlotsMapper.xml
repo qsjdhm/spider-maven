@@ -37,4 +37,98 @@
         WHERE name=#{name}
     </update>
 
+
+
+    <resultMap id="plotsResult" type="com.spider.entity.Plots">
+        <result property="name" column="name"/>
+        <result property="fdcUrl" column="fdcUrl"/>
+        <result property="area" column="area"/>
+        <result property="decoration" column="decoration"/>
+        <result property="use" column="use"/>
+
+        <result property="mortgage" column="mortgage"/>
+        <result property="salePermit" column="salePermit"/>
+        <result property="landUseCertificate" column="landUseCertificate"/>
+        <result property="planningPermit" column="planningPermit"/>
+        <result property="constructionPermit" column="constructionPermit"/>
+
+        <result property="pFloorId" column="pFloorId"/>
+        <result property="pFloorName" column="pFloorName"/>
+        <result property="hash" column="hash"/>
+    </resultMap>
+
+    <select id="select" parameterType="Map" resultMap="plotsResult" resultType="com.spider.entity.Plots">
+        select name, hash
+        from houses.plots PLOTS
+        where 1 = 1
+        <if test="name != null">
+            and PLOTS.name=#{name}
+        </if>
+        <if test="hash != null">
+            and PLOTS.hash=#{hash}
+        </if>
+        <if test="pHousesName != null">
+            and PLOTS.pHousesName=#{pHousesName}
+        </if>
+    </select>
+
+
+    <sql id="insertKey">
+        <trim suffixOverrides=",">
+            <if test="name!=null"> name, </if>
+            <if test="fdcUrl!=null"> fdcUrl, </if>
+            <if test="area!=null"> area, </if>
+            <if test="decoration!=null"> decoration, </if>
+            <if test="use!=null"> use, </if>
+            <if test="mortgage!=null"> mortgage, </if>
+            <if test="salePermit!=null"> salePermit, </if>
+            <if test="landUseCertificate!=null"> landUseCertificate, </if>
+            <if test="planningPermit!=null"> planningPermit, </if>
+            <if test="constructionPermit!=null"> constructionPermit, </if>
+            <if test="pFloorId!=null"> pFloorId, </if>
+            <if test="pFloorName!=null"> pFloorName, </if>
+            <if test="hash!=null"> hash, </if>
+        </trim>
+    </sql>
+    <sql id="insertValue">
+        <trim suffixOverrides=",">
+            <if test="name!=null"> #{name}, </if>
+            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
+            <if test="area!=null"> #{area}, </if>
+            <if test="decoration!=null"> #{decoration}, </if>
+            <if test="use!=null"> #{use}, </if>
+            <if test="mortgage!=null"> #{mortgage}, </if>
+            <if test="salePermit!=null"> #{salePermit}, </if>
+            <if test="landUseCertificate!=null"> #{landUseCertificate}, </if>
+            <if test="planningPermit!=null"> #{planningPermit}, </if>
+            <if test="constructionPermit!=null"> #{constructionPermit}, </if>
+            <if test="pFloorId!=null"> #{pFloorId}, </if>
+            <if test="pFloorName!=null"> #{pFloorName}, </if>
+            <if test="hash!=null"> #{hash}, </if>
+        </trim>
+    </sql>
+
+    <insert id="insert" parameterType="com.spider.entity.Plots" useGeneratedKeys="true" keyProperty="id">
+        insert into houses.plots (<include refid="insertKey"/>) values(<include refid="insertValue"/>);
+    </insert>
+
+    <update id="update" parameterType="com.spider.entity.Plots">
+        update houses.plots
+        <set>
+            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
+            <if test="area!=null"> #{area}, </if>
+            <if test="decoration!=null"> #{decoration}, </if>
+            <if test="use!=null"> #{use}, </if>
+            <if test="mortgage!=null"> #{mortgage}, </if>
+            <if test="salePermit!=null"> #{salePermit}, </if>
+            <if test="landUseCertificate!=null"> #{landUseCertificate}, </if>
+            <if test="planningPermit!=null"> #{planningPermit}, </if>
+            <if test="constructionPermit!=null"> #{constructionPermit}, </if>
+            <if test="pFloorId!=null"> #{pFloorId}, </if>
+            <if test="pFloorName!=null"> #{pFloorName}, </if>
+            <if test="hash!=null"> #{hash}, </if>
+        </set>
+        where name = #{name}
+    </update>
+
 </mapper>

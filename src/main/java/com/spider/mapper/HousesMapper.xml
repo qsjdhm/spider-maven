@@ -29,4 +29,77 @@
         WHERE name=#{name}
     </update>
 
+
+    <resultMap id="housesResult" type="com.spider.entity.Houses">
+        <result property="name" column="name"/>
+        <result property="fdcUrl" column="fdcUrl"/>
+        <result property="sfwUrl" column="sfwUrl"/>
+        <result property="cover" column="cover"/>
+        <result property="address" column="address"/>
+        <result property="averagePrice" column="averagePrice"/>
+        <result property="openingDate" column="openingDate"/>
+        <result property="pRebName" column="pRebName"/>
+        <result property="hash" column="hash"/>
+    </resultMap>
+
+    <select id="select" parameterType="Map" resultMap="housesResult" resultType="com.spider.entity.Houses">
+        select name, hash
+        from houses.houses HOUSES
+        where 1 = 1
+        <if test="name != null">
+            and HOUSES.name=#{name}
+        </if>
+        <if test="hash != null">
+            and HOUSES.hash=#{hash}
+        </if>
+    </select>
+
+
+    <sql id="insertKey">
+        <trim suffixOverrides=",">
+            <if test="name!=null"> name, </if>
+            <if test="fdcUrl!=null"> fdcUrl, </if>
+            <if test="sfwUrl!=null"> sfwUrl, </if>
+            <if test="cover!=null"> cover, </if>
+            <if test="address!=null"> address, </if>
+            <if test="averagePrice!=null"> averagePrice, </if>
+            <if test="openingDate!=null"> openingDate, </if>
+            <if test="pRebName!=null"> pRebName, </if>
+            <if test="hash!=null"> hash, </if>
+        </trim>
+    </sql>
+    <sql id="insertValue">
+        <trim suffixOverrides=",">
+            <if test="name!=null"> #{name}, </if>
+            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
+            <if test="sfwUrl!=null"> #{sfwUrl}, </if>
+            <if test="cover!=null"> #{cover}, </if>
+            <if test="address!=null"> #{address}, </if>
+            <if test="averagePrice!=null"> #{averagePrice}, </if>
+            <if test="openingDate!=null"> #{openingDate}, </if>
+            <if test="pRebName!=null"> #{pRebName}, </if>
+            <if test="hash!=null"> #{hash}, </if>
+        </trim>
+    </sql>
+
+    <insert id="insert" parameterType="com.spider.entity.Houses" useGeneratedKeys="true" keyProperty="id">
+        insert into houses.houses (<include refid="insertKey"/>) values(<include refid="insertValue"/>);
+    </insert>
+
+
+    <update id="update" parameterType="com.spider.entity.Houses">
+        update houses.houses
+        <set>
+            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
+            <if test="sfwUrl!=null"> #{sfwUrl}, </if>
+            <if test="cover!=null"> #{cover}, </if>
+            <if test="address!=null"> #{address}, </if>
+            <if test="averagePrice!=null"> #{averagePrice}, </if>
+            <if test="openingDate!=null"> #{openingDate}, </if>
+            <if test="pRebName!=null"> #{pRebName}, </if>
+            <if test="hash!=null"> #{hash}, </if>
+        </set>
+        where name = #{name}
+    </update>
+
 </mapper>
