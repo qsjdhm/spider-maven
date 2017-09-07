@@ -97,7 +97,7 @@ CREATE TABLE `reb` (
   `fdcUrl` varchar(1024) default NULL COMMENT '政府网URL',
   `qualificationLevel` varchar(256) default NULL COMMENT '资质等级',
   `qualificationId` varchar(256) default NULL COMMENT '资质编号',
-  `LegalPerson` varchar(256) default NULL COMMENT '法人代表',
+  `legalPerson` varchar(256) default NULL COMMENT '法人代表',
   `address` varchar(1024) default NULL COMMENT '企业地址',
   `phone` varchar(256) default NULL COMMENT '联系电话',
   `mail` varchar(256) default NULL COMMENT '企业邮箱',

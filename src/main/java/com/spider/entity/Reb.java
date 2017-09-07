@@ -17,7 +17,7 @@ public class Reb {
     private String fdcUrl = null;  // 政府网URL
     private String qualificationLevel = null;  // 资质等级
     private String qualificationId = null;  // 资质编号
-    private String LegalPerson = null;  // 法人代表
+    private String legalPerson = null;  // 法人代表
     private String address = null;  // 企业地址
     private String phone = null;  // 联系电话
     private String mail = null;  // 企业邮箱
@@ -61,11 +61,11 @@ public class Reb {
     }
 
     public String getLegalPerson() {
-        return LegalPerson;
+        return legalPerson;
     }
 
     public void setLegalPerson(String legalPerson) {
-        LegalPerson = legalPerson;
+        this.legalPerson = legalPerson;
     }
 
     public String getAddress() {

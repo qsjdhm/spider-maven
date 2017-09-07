@@ -15,7 +15,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zhangyan on 2017/8/30.
@@ -80,12 +82,21 @@ public class SqlServiceImpl {
         for (Reb reb : rebList) {
 
             // 对比数据是否需要更新
-            Reb findReb = rebMapper.findByName(reb.getName());
+            //Reb findReb = rebMapper.findByName(reb.getName());
 
-            if (findReb == null) {
+            Map<String, String> rebInfo = new HashMap<String, String>();
+            rebInfo.put("qualificationId", reb.getQualificationId());
+//            rebInfo.put("qualificationId", "012786");
+            List<Reb> findRebList = rebMapper.select(rebInfo);
+
+            if (findRebList.size() == 0) {
                 rebMapper.insertReb(reb);
-            } else if (!reb.getHash().equals(findReb.getHash())) {
-                rebMapper.updateReb(reb);
+            } else {
+                for (Reb findReb : findRebList) {
+                    if (!reb.getHash().equals(findReb.getHash())) {
+                        rebMapper.updateReb(reb);
+                    }
+                }
             }
         }
 

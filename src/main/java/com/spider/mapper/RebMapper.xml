@@ -15,9 +15,9 @@
     <!-- 插入房产商 -->
     <insert id="insertReb" parameterType="com.spider.entity.Reb" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `houses`.`reb` ( `name`, `fdcUrl`, `qualificationLevel`
-        , `qualificationId`, `LegalPerson`, `address`, `phone`, `mail`
+        , `qualificationId`, `legalPerson`, `address`, `phone`, `mail`
         , `registeredCapital`, `type`, `introduction`, `hash`)
-        VALUES (#{name}, #{fdcUrl}, #{qualificationLevel}, #{qualificationId}, #{LegalPerson}
+        VALUES (#{name}, #{fdcUrl}, #{qualificationLevel}, #{qualificationId}, #{legalPerson}
         , #{address}, #{phone}, #{mail}, #{registeredCapital}
         , #{type}, #{introduction}, #{hash})
     </insert>
@@ -26,7 +26,7 @@
     <update id="updateReb" parameterType="com.spider.entity.Reb">
         UPDATE houses.reb
         SET fdcUrl=#{fdcUrl}, qualificationLevel=#{qualificationLevel}, qualificationId=#{qualificationId},
-         LegalPerson=#{LegalPerson}, address=#{address}, phone=#{phone}, mail=#{mail},
+         legalPerson=#{legalPerson}, address=#{address}, phone=#{phone}, mail=#{mail},
           registeredCapital=#{registeredCapital}, type=#{type}, introduction=#{introduction}, hash=#{hash}
         WHERE name=#{name}
     </update>
@@ -37,7 +37,7 @@
         <result property="fdcUrl" column="fdcUrl"/>
         <result property="qualificationLevel" column="qualificationLevel"/>
         <result property="qualificationId" column="qualificationId"/>
-        <result property="LegalPerson" column="LegalPerson"/>
+        <result property="legalPerson" column="legalPerson"/>
         <result property="address" column="address"/>
         <result property="phone" column="phone"/>
         <result property="mail" column="mail"/>
@@ -48,7 +48,7 @@
     </resultMap>
 
 
-    <select id="select" parameterType="HashMap" resultMap="rebResult" resultType="com.spider.entity.Reb">
+    <select id="select" parameterType="Map" resultMap="rebResult" resultType="com.spider.entity.Reb">
         select name, hash
         from houses.reb REB
         where 1 = 1
@@ -57,6 +57,9 @@
         </if>
         <if test="hash != null">
             and REB.hash=#{hash}
+        </if>
+        <if test="qualificationId != null">
+            and REB.qualificationId=#{qualificationId}
         </if>
     </select>
 

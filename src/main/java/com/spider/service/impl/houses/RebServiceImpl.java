@@ -121,21 +121,21 @@ public class RebServiceImpl implements IRebService {
         String name = trs.eq(0).select("td").eq(1).text();
         String qualificationLevel = trs.eq(2).select("td").eq(1).text();
         String qualificationId = null;
-        String LegalPerson = trs.eq(5).select("td").eq(3).text();
+        String legalPerson = trs.eq(5).select("td").eq(3).text();
         String address = trs.eq(1).select("td").eq(1).text();
         String phone = trs.eq(3).select("td").eq(3).text();
         String mail = trs.eq(4).select("td").eq(3).text();  // 企业邮箱
         String registeredCapital = trs.eq(5).select("td").eq(1).text();  // 注册资金
         String type = trs.eq(6).select("td").eq(1).text();  // 企业类型
         String introduction = trs.eq(7).select("td").eq(1).text();  // 企业简介
-        String hash = name+qualificationLevel+qualificationId+LegalPerson+address+phone+mail+registeredCapital+type+introduction;
+        String hash = name+qualificationLevel+qualificationId+legalPerson+address+phone+mail+registeredCapital+type+introduction;
 
         Reb reb = new Reb();
         reb.setName(name);
         reb.setFdcUrl(url);
         reb.setQualificationLevel(qualificationLevel);
         reb.setQualificationId(qualificationId);
-        reb.setLegalPerson(LegalPerson);
+        reb.setLegalPerson(legalPerson);
         reb.setAddress(address);
         reb.setPhone(phone);
         reb.setMail(mail);

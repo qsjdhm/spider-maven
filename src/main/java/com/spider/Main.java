@@ -22,11 +22,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
 
-//        RebAction rebAction = new RebAction();
-//        rebAction.syncListByPage(2);
+        RebAction rebAction = new RebAction();
+        rebAction.syncListByPage(2);
 
-        HousesAction housesAction = new HousesAction();
-        housesAction.syncDetailsByUrl("中海国际社区", "http://zhonghaiguojishequ0531.fang.com");
 
 // http://www.cnblogs.com/myitroad/p/5516963.html
 

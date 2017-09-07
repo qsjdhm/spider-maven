@@ -2,6 +2,10 @@ package com.spider.dao;
 
 import com.spider.entity.Reb;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by zhangyan on 17/8/26.
  */
@@ -10,7 +14,7 @@ public interface RebMapper {
     void insertReb(Reb reb);
     void updateReb(Reb reb);
 
-    Reb select();
+    List<Reb> select(Map<String, String> rebInfo);
     void insert();
     void update();
 }
