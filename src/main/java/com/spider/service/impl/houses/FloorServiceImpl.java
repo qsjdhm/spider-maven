@@ -7,6 +7,7 @@ import com.spider.entity.Plots;
 import com.spider.service.houses.IFloorService;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.utils.AnalysisHouseUtil;
+import com.spider.utils.SetHash;
 import com.spider.utils.SysConstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +45,7 @@ public class FloorServiceImpl implements IFloorService {
                 try {
                     Floor floor = getDetailsByElement(fdcName, tr);
                     floor.setpHousesName(fdcName);
+                    floor.setHash(new SetHash().setFloorHash(floor));
 
                     String floorName = floor.getName();
                     String floorDetailsUrl = floor.getFdcUrl();

@@ -4,6 +4,8 @@ import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.impl.houses.FloorServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.service.impl.system.SqlServiceImpl;
+import com.spider.utils.SetHash;
 import com.spider.utils.SysConstant;
 
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.util.List;
 public class FloorAction {
 
     SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
+    SqlServiceImpl sqlService = new SqlServiceImpl();
     FloorServiceImpl floorService = new FloorServiceImpl();
 
 
@@ -73,6 +76,11 @@ public class FloorAction {
                 // 把每页的地块数据添加到全部的地块列表中
                 for(Floor floor : pageFloorList) {
                     allFloorList.add(floor);
+
+                    // 更新入数据库
+                    sqlService.updateFloor(floor);
+                    List<Plots> floorPlotsList = floor.getPlotsList();
+                    sqlService.updatePlotsList(floorPlotsList);
                 }
             }
         } while (number > 0);
@@ -101,6 +109,13 @@ public class FloorAction {
             );
 
             floorList = floorService.getListByPage(fdcName, number);
+
+            // 更新入数据库
+            for(Floor floor : floorList) {
+                sqlService.updateFloor(floor);
+                List<Plots> floorPlotsList = floor.getPlotsList();
+                sqlService.updatePlotsList(floorPlotsList);
+            }
 
             progressService.addProgress(
                     "地块", "分页", number,
@@ -137,8 +152,17 @@ public class FloorAction {
             );
 
             floor = floorService.getDetailsByUrl(url);
+            floor.setpHousesName(fdcName);
+            // 因为存在单独同步一个地块数据情况，所以要考虑在action中设置地块的pHousesName
+            // 所以在action中需要重新根据每个字段的name重新设置hash值
+            floor.setHash(new SetHash().setFloorHash(floor));
+
             List<Plots> floorPlotsList = floorService.getPlotsListByFloorDetailsUrl(fdcFloorName, url);
             floor.setPlotsList(floorPlotsList);
+
+            // 更新入数据库
+            sqlService.updateFloor(floor);
+            sqlService.updatePlotsList(floorPlotsList);
 
             progressService.addProgress(
                     "地块", "详情", 0,

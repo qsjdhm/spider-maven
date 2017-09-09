@@ -4,6 +4,7 @@ import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.impl.houses.PlotsServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.service.impl.system.SqlServiceImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 public class PlotsAction {
 
     SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
+    SqlServiceImpl sqlService = new SqlServiceImpl();
     PlotsServiceImpl plotsService = new PlotsServiceImpl();
 
     /**
@@ -71,6 +73,9 @@ public class PlotsAction {
                 // 把每页的地块数据添加到全部的地块列表中
                 for(Plots floor : pagePlotsList) {
                     allPlotsList.add(floor);
+
+                    // 更新入数据库
+                    sqlService.updatePlotsList(pagePlotsList);
                 }
             }
         } while (number > 0);
@@ -98,6 +103,9 @@ public class PlotsAction {
             );
 
             plotsList = plotsService.getListByPage(floorDetailsUrl, number);
+
+            // 更新入数据库
+            sqlService.updatePlotsList(plotsList);
 
             progressService.addProgress(
                     "单元楼", "分页", number,
@@ -135,6 +143,10 @@ public class PlotsAction {
             );
 
             plots = plotsService.getDetailsByUrl(url);
+            plots.setpFloorName(floorName);
+
+            // 更新入数据库
+            sqlService.updatePlots(plots);
 
             progressService.addProgress(
                     "单元楼", "详情", 0,

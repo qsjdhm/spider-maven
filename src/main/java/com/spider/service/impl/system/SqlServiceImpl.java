@@ -77,15 +77,12 @@ public class SqlServiceImpl {
     }
 
 
-    // 更新房产商的数据
+    // 更新房产商列表的数据
     public static void updateRebList (List<Reb> rebList) {
         for (Reb reb : rebList) {
 
-            // 对比数据是否需要更新
-            //Reb findReb = rebMapper.findByName(reb.getName());
-
             Map<String, String> rebInfo = new HashMap<String, String>();
-            rebInfo.put("qualificationId", reb.getQualificationId());
+            rebInfo.put("name", reb.getName());
 //            rebInfo.put("qualificationId", "012786");
             List<Reb> findRebList = rebMapper.select(rebInfo);
 
@@ -103,6 +100,28 @@ public class SqlServiceImpl {
         // 每一页数据就提交到数据库保存起来
         sqlSession.commit();
     }
+
+    // 更新单个房产商
+    public static void updateReb (Reb reb) {
+
+        Map<String, String> rebInfo = new HashMap<String, String>();
+        rebInfo.put("name", reb.getName());
+        List<Reb> findRebList = rebMapper.select(rebInfo);
+
+        if (findRebList.size() == 0) {
+            rebMapper.insertReb(reb);
+        } else {
+            for (Reb findReb : findRebList) {
+                if (!reb.getHash().equals(findReb.getHash())) {
+                    rebMapper.updateReb(reb);
+                }
+            }
+        }
+
+        // 每一页数据就提交到数据库保存起来
+        sqlSession.commit();
+    }
+
 
     // 更新楼盘的数据
     public static void updateHouses (Houses houses) {
@@ -146,6 +165,22 @@ public class SqlServiceImpl {
             } else if (!plots.getHash().equals(findPlots.getHash())) {
                 plotsMapper.updatePlots(plots);
             }
+        }
+
+        // 每一页数据就提交到数据库保存起来
+        sqlSession.commit();
+    }
+
+    // 更新单个单元楼列表的数据
+    public static void updatePlots (Plots plots) {
+
+        // 对比数据是否需要更新
+        Plots findPlots = plotsMapper.findByName(plots.getName());
+
+        if (findPlots == null) {
+            plotsMapper.insertPlots(plots);
+        } else if (!plots.getHash().equals(findPlots.getHash())) {
+            plotsMapper.updatePlots(plots);
         }
 
         // 每一页数据就提交到数据库保存起来

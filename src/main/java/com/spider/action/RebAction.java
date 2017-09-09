@@ -76,7 +76,7 @@ public class RebAction {
                     allRebList.add(reb);
                 }
 
-                // 向数据库同步房产商数据
+                // 更新入数据库
                 sqlService.updateRebList(pageRebList);
             }
 
@@ -104,7 +104,7 @@ public class RebAction {
 
             rebList = rebService.getListByPage(number);
 
-            // 向数据库同步房产商数据
+            // 更新入数据库
             sqlService.updateRebList(rebList);
 
             progressService.addProgress(
@@ -147,10 +147,8 @@ public class RebAction {
                     "完成", "", locationList, null
             );
 
-            List<Reb> rebList = new ArrayList<Reb>();
-            rebList.add(reb);
-            // 向数据库同步房产商数据
-            sqlService.updateRebList(rebList);
+            // 更新入数据库
+            sqlService.updateReb(reb);
 
         } catch (IOException e) {
             if (e.toString().indexOf("Read timed out") > -1) {

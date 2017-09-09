@@ -18,7 +18,6 @@ public class HousesAction {
     SpiderProgressServiceImpl progressService = new SpiderProgressServiceImpl();
     SqlServiceImpl sqlService = new SqlServiceImpl();
     HousesServiceImpl housesService = new HousesServiceImpl();
-    FloorServiceImpl floorService = new FloorServiceImpl();
 
 
     /**
@@ -73,15 +72,11 @@ public class HousesAction {
                 for(Houses houses : pageHousesList) {
                     allHousesList.add(houses);
 
-                    // 存储单个楼盘数据
+                    // 更新入数据库
                     sqlService.updateHouses(houses);
-
-                    // 存储此楼盘单个地块的数据
                     List<Floor> housesFloorList = houses.getFloorList();
                     for(Floor floor : housesFloorList) {
                         sqlService.updateFloor(floor);
-
-                        // 存储此地块的单元楼列表数据
                         List<Plots> floorPlotsList = floor.getPlotsList();
                         sqlService.updatePlotsList(floorPlotsList);
                     }
@@ -111,17 +106,14 @@ public class HousesAction {
                 // 存储单个楼盘数据
                 sqlService.updateHouses(houses);
 
-                // 存储此楼盘单个地块的数据
+                // 更新入数据库
                 List<Floor> housesFloorList = houses.getFloorList();
                 for(Floor floor : housesFloorList) {
                     sqlService.updateFloor(floor);
-
-                    // 存储此地块的单元楼列表数据
                     List<Plots> floorPlotsList = floor.getPlotsList();
                     sqlService.updatePlotsList(floorPlotsList);
                 }
             }
-
 
             progressService.addProgress(
                     "楼盘", "分页", number,
@@ -163,17 +155,10 @@ public class HousesAction {
             houses.setFloorList(housesFloorList);
 
 
-            // 存储到数据库
-            List<Houses> housesList = new ArrayList<Houses>();
-            housesList.add(houses);
-            // 存储单个楼盘数据
+            // 更新入数据库
             sqlService.updateHouses(houses);
-
-            // 存储此楼盘单个地块的数据
             for(Floor floor : housesFloorList) {
                 sqlService.updateFloor(floor);
-
-                // 存储此地块的单元楼列表数据
                 List<Plots> floorPlotsList = floor.getPlotsList();
                 sqlService.updatePlotsList(floorPlotsList);
             }

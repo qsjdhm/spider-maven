@@ -4,6 +4,7 @@ import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.houses.IPlotsService;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
+import com.spider.utils.SetHash;
 import com.spider.utils.SysConstant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +42,8 @@ public class PlotsServiceImpl implements IPlotsService {
                 try {
                     Plots plots = getDetailsByElement(floorName, tr);
                     plots.setpFloorName(floorName);
+                    plots.setHash(new SetHash().setPlotsHash(plots));
+
                     plotsList.add(plots);
 
                     List locationList = new ArrayList();

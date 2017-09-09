@@ -21,9 +21,8 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-
-        RebAction rebAction = new RebAction();
-        rebAction.syncListByPage(2);
+        PlotsAction  plotsAction = new PlotsAction();
+        plotsAction.syncDetailsByUrl("中海国际社区B-2地块", "67楼", "http://www.jnfdc.gov.cn/onsaling/bshow.shtml?bno=23c5bfad-f26f-4f8f-b1db-cf15b8a9e1ac");
 
 
 // http://www.cnblogs.com/myitroad/p/5516963.html
