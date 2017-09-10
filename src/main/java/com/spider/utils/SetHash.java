@@ -41,14 +41,14 @@ public class SetHash {
         String fdcUrl = plots.getFdcUrl();
         String area = plots.getArea();
         String decoration = plots.getDecoration();
-        String use = plots.getUse();
+        String utilization = plots.getUtilization();
         String mortgage = plots.getMortgage();
         String salePermit = plots.getSalePermit();
         String landUseCertificate = plots.getLandUseCertificate();
         String planningPermit = plots.getPlanningPermit();
         String constructionPermit = plots.getConstructionPermit();
         String pFloorName = plots.getpFloorName();
-        String hash = name+fdcUrl+area+decoration+use+mortgage+salePermit+landUseCertificate+planningPermit+constructionPermit+pFloorName;
+        String hash = name+fdcUrl+area+decoration+utilization+mortgage+salePermit+landUseCertificate+planningPermit+constructionPermit+pFloorName;
 
         return hash;
 

@@ -104,17 +104,17 @@
     <update id="update" parameterType="com.spider.entity.Reb">
         update houses.reb
         <set>
-            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
-            <if test="qualificationLevel!=null"> #{qualificationLevel}, </if>
-            <if test="qualificationId!=null"> #{qualificationId}, </if>
-            <if test="legalPerson!=null"> #{legalPerson}, </if>
-            <if test="address!=null"> #{address}, </if>
-            <if test="phone!=null"> #{phone}, </if>
-            <if test="mail!=null"> #{mail}, </if>
-            <if test="registeredCapital!=null"> #{registeredCapital}, </if>
-            <if test="type!=null"> #{type}, </if>
-            <if test="introduction!=null"> #{introduction}, </if>
-            <if test="hash!=null"> #{hash}, </if>
+            <if test="fdcUrl!=null"> fdcUrl=#{fdcUrl}, </if>
+            <if test="qualificationLevel!=null"> qualificationLevel=#{qualificationLevel}, </if>
+            <if test="qualificationId!=null"> qualificationId=#{qualificationId}, </if>
+            <if test="legalPerson!=null"> legalPerson=#{legalPerson}, </if>
+            <if test="address!=null"> address=#{address}, </if>
+            <if test="phone!=null"> phone=#{phone}, </if>
+            <if test="mail!=null"> mail=#{mail}, </if>
+            <if test="registeredCapital!=null"> registeredCapital=#{registeredCapital}, </if>
+            <if test="type!=null"> type=#{type}, </if>
+            <if test="introduction!=null"> introduction=#{introduction}, </if>
+            <if test="hash!=null"> hash=#{hash}, </if>
         </set>
         where name = #{name}
     </update>

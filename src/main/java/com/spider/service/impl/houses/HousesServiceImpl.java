@@ -35,7 +35,7 @@ public class HousesServiceImpl implements IHousesService {
         String sfwUrl = new SysConstant().HOUSES_LIST_URL + "/b9"+housesNumber;
         List<Houses> housesList = new ArrayList<Houses>();
 
-        Document pageDoc = Jsoup.connect(sfwUrl).timeout(5000).get();  // 承载抓取到的每页房产商DOM数据
+        Document pageDoc = Jsoup.connect(sfwUrl).timeout(15000).get();  // 承载抓取到的每页房产商DOM数据
         Elements lis = pageDoc.select("#newhouse_loupai_list li");
 
         for (Element li : lis) {
@@ -124,7 +124,7 @@ public class HousesServiceImpl implements IHousesService {
         String openingDate = null;
         String pRebName = null;
 
-        Document detailedDoc = Jsoup.connect(url).timeout(5000).get();
+        Document detailedDoc = Jsoup.connect(url).timeout(15000).get();
 
         // 如果是公寓类型
         if (detailedDoc.select(".inf_left1 strong").text().equals("")) {

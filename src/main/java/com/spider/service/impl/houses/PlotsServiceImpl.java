@@ -119,20 +119,20 @@ public class PlotsServiceImpl implements IPlotsService {
         String fdcUrl = url;  // 单元楼页面政府网URL
         String area = trs.eq(4).select("td").eq(3).text()+"(万m²)";  // 建筑面积
         String decoration = trs.eq(5).select("td").eq(3).text();  // 装修标准
-        String use = trs.eq(6).select("td").eq(1).text();  // 规划用途
+        String utilization = trs.eq(6).select("td").eq(1).text();  // 规划用途
         String mortgage = trs.eq(6).select("td").eq(3).text();  // 有无抵押
         String salePermit = trs.eq(7).select("td").eq(1).text();  // 商品房预售许可证
         String landUseCertificate = trs.eq(7).select("td").eq(3).text();  // 国有土地使用证
         String planningPermit = trs.eq(8).select("td").eq(1).text();  // 建设工程规划许可证
         String constructionPermit = trs.eq(8).select("td").eq(3).text();  // 建设工程施工许可证
-        String hash = name+fdcUrl+area+decoration+use+mortgage+salePermit+landUseCertificate+planningPermit+constructionPermit;
+        String hash = name+fdcUrl+area+decoration+utilization+mortgage+salePermit+landUseCertificate+planningPermit+constructionPermit;
 
         Plots plots = new Plots();
         plots.setName(name);
         plots.setFdcUrl(fdcUrl);
         plots.setArea(area);
         plots.setDecoration(decoration);
-        plots.setUse(use);
+        plots.setUtilization(utilization);
         plots.setMortgage(mortgage);
         plots.setSalePermit(salePermit);
         plots.setLandUseCertificate(landUseCertificate);

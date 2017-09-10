@@ -80,25 +80,8 @@ public class SqlServiceImpl {
     // 更新房产商列表的数据
     public static void updateRebList (List<Reb> rebList) {
         for (Reb reb : rebList) {
-
-            Map<String, String> rebInfo = new HashMap<String, String>();
-            rebInfo.put("name", reb.getName());
-//            rebInfo.put("qualificationId", "012786");
-            List<Reb> findRebList = rebMapper.select(rebInfo);
-
-            if (findRebList.size() == 0) {
-                rebMapper.insertReb(reb);
-            } else {
-                for (Reb findReb : findRebList) {
-                    if (!reb.getHash().equals(findReb.getHash())) {
-                        rebMapper.updateReb(reb);
-                    }
-                }
-            }
+            updateReb(reb);
         }
-
-        // 每一页数据就提交到数据库保存起来
-        sqlSession.commit();
     }
 
     // 更新单个房产商
@@ -109,11 +92,11 @@ public class SqlServiceImpl {
         List<Reb> findRebList = rebMapper.select(rebInfo);
 
         if (findRebList.size() == 0) {
-            rebMapper.insertReb(reb);
+            rebMapper.insert(reb);
         } else {
             for (Reb findReb : findRebList) {
                 if (!reb.getHash().equals(findReb.getHash())) {
-                    rebMapper.updateReb(reb);
+                    rebMapper.update(reb);
                 }
             }
         }
@@ -125,13 +108,19 @@ public class SqlServiceImpl {
 
     // 更新楼盘的数据
     public static void updateHouses (Houses houses) {
-        // 对比数据是否需要更新
-        Houses findHouses = housesMapper.findByName(houses.getName());
 
-        if (findHouses == null) {
-            housesMapper.insertHouses(houses);
-        } else if (!houses.getHash().equals(findHouses.getHash())) {
-            housesMapper.updateHouses(houses);
+        Map<String, String> housesInfo = new HashMap<String, String>();
+        housesInfo.put("name", houses.getName());
+        List<Houses> findHousesList = housesMapper.select(housesInfo);
+
+        if (findHousesList.size() == 0) {
+            housesMapper.insert(houses);
+        } else {
+            for (Houses findHouses : findHousesList) {
+                if (!houses.getHash().equals(findHouses.getHash())) {
+                    housesMapper.update(houses);
+                }
+            }
         }
 
         // 每一条数据就提交到数据库保存起来
@@ -140,13 +129,19 @@ public class SqlServiceImpl {
 
     // 更新地块的数据
     public static void updateFloor (Floor floor) {
-        // 对比数据是否需要更新
-        Floor findFloor = floorMapper.findByName(floor.getName());
 
-        if (findFloor == null) {
-            floorMapper.insertFloor(floor);
-        } else if (!floor.getHash().equals(findFloor.getHash())) {
-            floorMapper.updateFloor(floor);
+        Map<String, String> floorInfo = new HashMap<String, String>();
+        floorInfo.put("name", floor.getName());
+        List<Floor> findFloorList = floorMapper.select(floorInfo);
+
+        if (findFloorList.size() == 0) {
+            floorMapper.insert(floor);
+        } else {
+            for (Floor findFloor : findFloorList) {
+                if (!floor.getHash().equals(findFloor.getHash())) {
+                    floorMapper.update(floor);
+                }
+            }
         }
 
         // 每一条数据就提交到数据库保存起来
@@ -155,32 +150,27 @@ public class SqlServiceImpl {
 
     // 更新单元楼列表的数据
     public static void updatePlotsList (List<Plots> plotsList) {
+
         for (Plots plots : plotsList) {
-
-            // 对比数据是否需要更新
-            Plots findPlots = plotsMapper.findByName(plots.getName());
-
-            if (findPlots == null) {
-                plotsMapper.insertPlots(plots);
-            } else if (!plots.getHash().equals(findPlots.getHash())) {
-                plotsMapper.updatePlots(plots);
-            }
+            updatePlots(plots);
         }
-
-        // 每一页数据就提交到数据库保存起来
-        sqlSession.commit();
     }
 
     // 更新单个单元楼列表的数据
     public static void updatePlots (Plots plots) {
 
-        // 对比数据是否需要更新
-        Plots findPlots = plotsMapper.findByName(plots.getName());
+        Map<String, String> plotsInfo = new HashMap<String, String>();
+        plotsInfo.put("name", plots.getName());
+        List<Plots> findPlotsList = plotsMapper.select(plotsInfo);
 
-        if (findPlots == null) {
-            plotsMapper.insertPlots(plots);
-        } else if (!plots.getHash().equals(findPlots.getHash())) {
-            plotsMapper.updatePlots(plots);
+        if (findPlotsList.size() == 0) {
+            plotsMapper.insert(plots);
+        } else {
+            for (Plots findPlots : findPlotsList) {
+                if (!plots.getHash().equals(findPlots.getHash())) {
+                    plotsMapper.update(plots);
+                }
+            }
         }
 
         // 每一页数据就提交到数据库保存起来

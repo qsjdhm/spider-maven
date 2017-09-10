@@ -106,16 +106,16 @@
     <update id="update" parameterType="com.spider.entity.Floor">
         update houses.floor
         <set>
-            <if test="fdcUrl!=null"> #{fdcUrl}, </if>
-            <if test="canSold!=null"> #{canSold}, </if>
-            <if test="address!=null"> #{address}, </if>
-            <if test="county!=null"> #{county}, </if>
-            <if test="scale!=null"> #{scale}, </if>
-            <if test="totalPlotsNumber!=null"> #{totalPlotsNumber}, </if>
-            <if test="property!=null"> #{property}, </if>
-            <if test="pHousesId!=null"> #{pHousesId}, </if>
-            <if test="pHousesName!=null"> #{pHousesName}, </if>
-            <if test="hash!=null"> #{hash}, </if>
+            <if test="fdcUrl!=null"> fdcUrl=#{fdcUrl}, </if>
+            <if test="canSold!=null"> canSold=#{canSold}, </if>
+            <if test="address!=null"> address=#{address}, </if>
+            <if test="county!=null"> county=#{county}, </if>
+            <if test="scale!=null"> scale=#{scale}, </if>
+            <if test="totalPlotsNumber!=null"> totalPlotsNumber=#{totalPlotsNumber}, </if>
+            <if test="property!=null"> property=#{property}, </if>
+            <if test="pHousesId!=null"> pHousesId=#{pHousesId}, </if>
+            <if test="pHousesName!=null"> pHousesName=#{pHousesName}, </if>
+            <if test="hash!=null"> hash=#{hash}, </if>
         </set>
         where name = #{name}
     </update>

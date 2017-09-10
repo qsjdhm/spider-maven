@@ -16,7 +16,7 @@ public class Plots {
     private String fdcUrl = null;  // 单元楼页面政府网URL
     private String area = null;  // 建筑面积
     private String decoration = null;  // 装修标准
-    private String use = null;  // 规划用途
+    private String utilization = null;  // 规划用途
     private String mortgage = null;  // 有无抵押
     private String salePermit = null;  // 商品房预售许可证
     private String landUseCertificate = null;  // 国有土地使用证
@@ -58,12 +58,12 @@ public class Plots {
         this.decoration = decoration;
     }
 
-    public String getUse() {
-        return use;
+    public String getUtilization() {
+        return utilization;
     }
 
-    public void setUse(String use) {
-        this.use = use;
+    public void setUtilization(String utilization) {
+        this.utilization = utilization;
     }
 
     public String getMortgage() {
