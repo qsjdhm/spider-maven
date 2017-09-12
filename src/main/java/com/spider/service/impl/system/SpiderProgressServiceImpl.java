@@ -23,17 +23,26 @@ public class SpiderProgressServiceImpl {
     // 当前进度列表
     private static List<Map<String, Object>> progressList = new ArrayList<Map<String, Object>>();
 
-    SpiderProgressServiceImpl () {
+    public SpiderProgressServiceImpl() {
         ServerSocket serverSocket = null;    //用serversocket来启动服务器，并指定端口号
         try {
-            serverSocket = new ServerSocket(10000);
+            serverSocket = new ServerSocket(33333);
             System.out.println("服务器启动。。。");
+
+            PrintWriter out;
+
 
             while (true) {
                 // 一旦有堵塞, 则表示服务器与客户端获得了连接
                 Socket client = serverSocket.accept();
+                String RemoteIP = serverSocket.getInetAddress().getHostName();
+                String RemotePort = "" + serverSocket.getLocalPort();
+                System.out.println(RemoteIP+" "+ RemotePort);
                 // 处理这次连接
-                new HandlerThread(client);
+                //new HandlerThread(client);
+                out = new PrintWriter(client.getOutputStream(), true);
+                out.print("消息已经收到了");
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,7 +51,7 @@ public class SpiderProgressServiceImpl {
 
     }
 
-    http://blog.csdn.net/defonds/article/details/7971259
+
 
     /**
      * 外部会逐条往progressList添加进度信息
@@ -131,3 +140,4 @@ public class SpiderProgressServiceImpl {
 
 
 }
+

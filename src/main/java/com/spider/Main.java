@@ -3,13 +3,19 @@ package com.spider;
 import com.spider.action.*;
 import com.spider.dao.RebMapper;
 import com.spider.entity.Reb;
+import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.service.impl.system.SqlServiceImpl;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +25,20 @@ import java.util.Map;
  * Created by zhangyan on 17/7/16.
  */
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
-        HousesAction housesAction = new HousesAction();
-        housesAction.syncListByPage(1);
+//        HousesAction housesAction = new HousesAction();
+//        housesAction.syncListByPage(1);
 // http://www.cnblogs.com/myitroad/p/5516963.html
+
+        new TalkServer().start();
+        Thread.sleep(100);//调整时间，让服务端准备好
+        new Client().start();
+
+
+
+//        new TCPServer();
+//        new TCPlient();
 
 
         /**
@@ -70,5 +85,66 @@ public class Main {
 
 
     }
+
+
+
+    static class TalkServer extends Thread {
+
+        public void run() {
+            try {
+                ServerSocket server = new ServerSocket(1803);
+                Socket socket = server.accept();
+                //BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
+                PrintWriter os = new PrintWriter(socket.getOutputStream());
+                BufferedReader is = new BufferedReader(new InputStreamReader(
+                        socket.getInputStream()));
+
+                String readline = null;
+                System.out.println("Client:" + is.readLine());
+                //readline = sin.readLine();
+                os.println("dfghjkl;';lkjhgf");
+//                while (!readline.equals("bye")) {
+//                    os.println("dfghjkl;';lkjhgf");
+//                    os.flush();
+//                    System.out.println("Server1:" + readline);
+//                    System.out.println("Client:" + is.readLine());
+//
+//                    //readline = sin.readLine();
+//                }
+                os.close();
+                is.close();
+                socket.close();
+                server.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static class Client extends Thread {
+        public void run() {
+            try{
+
+
+
+
+                Socket client = new Socket("localhost", 1803);
+                //BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
+                PrintWriter os = new PrintWriter(client.getOutputStream());
+                BufferedReader is = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                //String readline = sin.readLine();
+                os.println("hello, server. im client1");
+                os.flush();
+                os.println("hello, server. im client2");
+                os.flush();
+                os.println("hello, server. im client3");
+                os.flush();
+                System.out.println("Server2:" + is.readLine());
+            }catch(Exception ex){ex.printStackTrace();}
+        }
+    }
+
 }
+
+
 
