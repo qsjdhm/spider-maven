@@ -4,8 +4,11 @@ import com.spider.service.impl.houses.RebServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.*;
 
 /**
@@ -20,6 +23,26 @@ public class SpiderProgressServiceImpl {
     // 当前进度列表
     private static List<Map<String, Object>> progressList = new ArrayList<Map<String, Object>>();
 
+    SpiderProgressServiceImpl () {
+        ServerSocket serverSocket = null;    //用serversocket来启动服务器，并指定端口号
+        try {
+            serverSocket = new ServerSocket(10000);
+            System.out.println("服务器启动。。。");
+
+            while (true) {
+                // 一旦有堵塞, 则表示服务器与客户端获得了连接
+                Socket client = serverSocket.accept();
+                // 处理这次连接
+                new HandlerThread(client);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    http://blog.csdn.net/defonds/article/details/7971259
 
     /**
      * 外部会逐条往progressList添加进度信息
