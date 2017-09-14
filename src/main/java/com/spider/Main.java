@@ -10,15 +10,13 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 
 /**
@@ -92,56 +90,69 @@ public class Main {
 
         public void run() {
             try {
-                ServerSocket server = new ServerSocket(1803);
+                ServerSocket server = new ServerSocket(1083);
                 Socket socket = server.accept();
-                //BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
-                PrintWriter os = new PrintWriter(socket.getOutputStream());
-                BufferedReader is = new BufferedReader(new InputStreamReader(
-                        socket.getInputStream()));
 
-                String readline = null;
-                System.out.println("Client:" + is.readLine());
-                //readline = sin.readLine();
-                os.println("dfghjkl;';lkjhgf");
-//                while (!readline.equals("bye")) {
-//                    os.println("dfghjkl;';lkjhgf");
-//                    os.flush();
-//                    System.out.println("Server1:" + readline);
-//                    System.out.println("Client:" + is.readLine());
-//
-//                    //readline = sin.readLine();
-//                }
-                os.close();
-                is.close();
-                socket.close();
-                server.close();
+                // 初始化输出流
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+
+                // 从socket获取数据
+                InputStream is = socket.getInputStream();
+                DataInputStream dis = new DataInputStream(is);
+
+                while(true){
+                    // 打印客户端发送的数据
+                    System.out.println("client_msg:"+dis.readUTF());
+
+                    Thread.sleep(1000);
+                    // 向客户端输出数据
+                    out.writeUTF(getRandomStr());
+                    out.flush();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+        }
+
+        private static String getRandomStr(){
+            String str = "";
+            int ID = (int) (Math.random()*30);
+            int x = (int) (Math.random()*200);
+            int y = (int) (Math.random()*300);
+            int z = (int) (Math.random()*10);
+            str = "ID:"+ID+"/x:"+x+"/y:"+y+"/z:"+z;
+            return str;
         }
     }
 
     static class Client extends Thread {
         public void run() {
+
             try{
 
+                // 连接socket服务器
+                Socket socket = new Socket("localhost",1083);
 
+                // 初始化输出流
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
+                while(true){
+                    // 先发送数据请求
+                    out.writeUTF("gei dian bai");
 
-                Socket client = new Socket("localhost", 1803);
-                //BufferedReader sin = new BufferedReader(new InputStreamReader(System.in));
-                PrintWriter os = new PrintWriter(client.getOutputStream());
-                BufferedReader is = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                //String readline = sin.readLine();
-                os.println("hello, server. im client1");
-                os.flush();
-                os.println("hello, server. im client2");
-                os.flush();
-                os.println("hello, server. im client3");
-                os.flush();
-                System.out.println("Server2:" + is.readLine());
-            }catch(Exception ex){ex.printStackTrace();}
+                    // 从socket获取数据
+                    InputStream is = socket.getInputStream();
+                    DataInputStream dis  = new DataInputStream(is);
+                    System.out.println("server_msg:"+dis.readUTF());
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
+
+
     }
 
 }
