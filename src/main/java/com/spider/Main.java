@@ -30,9 +30,12 @@ public class Main {
 // http://www.cnblogs.com/myitroad/p/5516963.html
 
         new TalkServer().start();
-        Thread.sleep(100);//调整时间，让服务端准备好
-        new Client().start();
+//        Thread.sleep(100);//调整时间，让服务端准备好
+//        new Client().start();
 
+        PlotsAction  plotsAction = new PlotsAction();
+        plotsAction.syncAllList("中海国际社区B-2地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6");
+//
 
 
 //        new TCPServer();
@@ -90,8 +93,10 @@ public class Main {
 
         public void run() {
             try {
-                ServerSocket server = new ServerSocket(1083);
+                ServerSocket server = new ServerSocket(1888);
                 Socket socket = server.accept();
+
+                int a = 0;
 
                 // 初始化输出流
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -99,19 +104,29 @@ public class Main {
                 // 从socket获取数据
                 InputStream is = socket.getInputStream();
                 DataInputStream dis = new DataInputStream(is);
+                //System.out.println("client_msg:"+dis.readUTF());
 
                 while(true){
                     // 打印客户端发送的数据
-                    System.out.println("client_msg:"+dis.readUTF());
+                    String abc = dis.readUTF();
+                    System.out.println("client_msg:"+abc);
+                    System.out.println("-----------------------");
 
-                    Thread.sleep(1000);
-                    // 向客户端输出数据
-                    out.writeUTF(getRandomStr());
-                    out.flush();
+                    if (abc.equals("close")) {
+
+                        break;
+                    }
+
+//                    Thread.sleep(1000);
+//                    // 向客户端输出数据
+//                    out.writeUTF(getRandomStr());
+//                    out.flush();
                 }
+                out.close();
+                dis.close();
+                socket.close();
+                System.out.println("socket成功关闭！！！");
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

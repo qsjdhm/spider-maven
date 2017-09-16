@@ -21,8 +21,11 @@ public class PlotsAction {
      * syncAllList("中海国际社区B-2地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6")
      */
     public void syncAllList(String floorName, String floorDetailsUrl) {
+        // 1. 初始化同步socket
+        progressService.initProgressSocket();
 
-        // 1. 循环调用service方法获取数据
+
+        // 2. 循环调用service方法获取数据
         List<Plots> allPlotsList = new ArrayList<Plots>();
         int number = 1;
         boolean isTimedOut = false;
@@ -79,9 +82,9 @@ public class PlotsAction {
                 }
             }
         } while (number > 0);
-        // 2. 在循环过程中socket通知管理平台同步进度（包括每页同步遇到的超时异常，供管理平台进一步操作）
-        // 3. 根据service抛出的超时异常、代码异常生成日志
-        // 4. 根据每页数据写入数据库
+
+        // 3. 关闭同步socket
+        progressService.closeProgressSocket();
     }
 
 

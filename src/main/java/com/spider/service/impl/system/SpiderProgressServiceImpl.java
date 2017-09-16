@@ -1,9 +1,11 @@
 package com.spider.service.impl.system;
 
+import com.spider.Main;
 import com.spider.service.impl.houses.RebServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,37 +20,41 @@ import java.util.*;
 public class SpiderProgressServiceImpl {
 
     private static Logger logger = LogManager.getLogger(SpiderProgressServiceImpl.class.getName());
+    private static Socket socket = null;
+    private static DataOutputStream out = null;
 
 
+    private static int number = 0;
     // 当前进度列表
     private static List<Map<String, Object>> progressList = new ArrayList<Map<String, Object>>();
 
-    public SpiderProgressServiceImpl() {
-        ServerSocket serverSocket = null;    //用serversocket来启动服务器，并指定端口号
+
+    /**
+     * 初始化进度socket
+     * 在每一次action执行时被调用
+     */
+    public static void initProgressSocket() {
         try {
-            serverSocket = new ServerSocket(33333);
-            System.out.println("服务器启动。。。");
-
-            PrintWriter out;
-
-
-            while (true) {
-                // 一旦有堵塞, 则表示服务器与客户端获得了连接
-                Socket client = serverSocket.accept();
-                String RemoteIP = serverSocket.getInetAddress().getHostName();
-                String RemotePort = "" + serverSocket.getLocalPort();
-                System.out.println(RemoteIP+" "+ RemotePort);
-                // 处理这次连接
-                //new HandlerThread(client);
-                out = new PrintWriter(client.getOutputStream(), true);
-                out.print("消息已经收到了");
-
-            }
+            socket = new Socket("localhost", 1888);
+            out = new DataOutputStream(socket.getOutputStream());
+            System.out.println("客户端socket启动成功！！！");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-
+    /**
+     * 关闭socket
+     * 在每一次action执行完成爬虫任务时被调用
+     */
+    public static void closeProgressSocket() {
+        try {
+            out.writeUTF("close");
+            out.close();
+            socket.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
 
@@ -93,7 +99,6 @@ public class SpiderProgressServiceImpl {
             info += "详情数据"+state;
         }
 
-
         // 2. 处理log4j日志
         if (state.equals("超时异常")) {
             StringWriter sw = new StringWriter();
@@ -104,10 +109,24 @@ public class SpiderProgressServiceImpl {
             logger.info(info);
         }
 
+        number++;
         // 3. 应该把所有参数通过websocket通知前台
 
 
-        System.out.println(info);
+
+
+//        clientSocket.sendSocket(info);
+        try {
+            //new Main.TalkServer().start();
+//            System.out.println(out);
+//            System.out.println(socket);
+            out.writeUTF(info);
+            out.flush();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        //System.out.println(info);
     }
 
     /**
