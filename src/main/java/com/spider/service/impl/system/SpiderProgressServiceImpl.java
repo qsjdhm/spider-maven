@@ -20,42 +20,12 @@ import java.util.*;
 public class SpiderProgressServiceImpl {
 
     private static Logger logger = LogManager.getLogger(SpiderProgressServiceImpl.class.getName());
-    private static Socket socket = null;
-    private static DataOutputStream out = null;
 
 
-    private static int number = 0;
     // 当前进度列表
     private static List<Map<String, Object>> progressList = new ArrayList<Map<String, Object>>();
 
 
-    /**
-     * 初始化进度socket
-     * 在每一次action执行时被调用
-     */
-    public static void initProgressSocket() {
-        try {
-            socket = new Socket("localhost", 1888);
-            out = new DataOutputStream(socket.getOutputStream());
-            System.out.println("客户端socket启动成功！！！");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 关闭socket
-     * 在每一次action执行完成爬虫任务时被调用
-     */
-    public static void closeProgressSocket() {
-        try {
-            out.writeUTF("close");
-            out.close();
-            socket.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
 
 
 
@@ -84,7 +54,6 @@ public class SpiderProgressServiceImpl {
         progressList.add(progress);
 
 
-
         // 1. 组织同步进度信息
         String info = "同步"+label;
         if (type.equals("分页")) {
@@ -109,24 +78,10 @@ public class SpiderProgressServiceImpl {
             logger.info(info);
         }
 
-        number++;
         // 3. 应该把所有参数通过websocket通知前台
-
-
-
-
-//        clientSocket.sendSocket(info);
-        try {
-            //new Main.TalkServer().start();
-//            System.out.println(out);
-//            System.out.println(socket);
-            out.writeUTF(info);
-            out.flush();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-        //System.out.println(info);
+        System.out.println("----------");
+        System.out.println(info);
+        new SocketServiceImpl().sendMsg(info);
     }
 
     /**

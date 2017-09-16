@@ -3,6 +3,7 @@ package com.spider;
 import com.spider.action.*;
 import com.spider.dao.RebMapper;
 import com.spider.entity.Reb;
+import com.spider.service.impl.system.SocketServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.service.impl.system.SqlServiceImpl;
 import org.apache.ibatis.io.Resources;
@@ -25,21 +26,27 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-//        HousesAction housesAction = new HousesAction();
-//        housesAction.syncListByPage(1);
-// http://www.cnblogs.com/myitroad/p/5516963.html
 
-        new TalkServer().start();
-//        Thread.sleep(100);//调整时间，让服务端准备好
-//        new Client().start();
-
-        PlotsAction  plotsAction = new PlotsAction();
-        plotsAction.syncAllList("中海国际社区B-2地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6");
-//
+        new socketServer().start();
+        Thread.sleep(100);  // 调整时间，让服务端准备好
+        new Client().start();
 
 
-//        new TCPServer();
-//        new TCPlient();
+
+        PlotsAction plotsAction = new PlotsAction();
+        plotsAction.syncListByPage("中海国际社区C-1地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=796f5efb-d8a8-490c-9235-13150582bfd8", 1);
+
+
+        System.out.println(":::::::::::::::::::::::::::::");
+        System.out.println(":::::::::::::::::::::::::::::");
+        System.out.println(":::::::::::::::::::::::::::::");
+
+        Thread.sleep(3000);  // 调整时间，让服务端准备好
+        new Client().start();
+        plotsAction.syncListByPage("中海国际社区C-1地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=796f5efb-d8a8-490c-9235-13150582bfd8", 1);
+
+
+
 
 
         /**
@@ -80,89 +87,54 @@ public class Main {
 
 
 
-
-
-
-
-
     }
 
 
 
-    static class TalkServer extends Thread {
+    static class socketServer extends Thread {
 
         public void run() {
             try {
+                System.out.println("等待客户端socket连接...");
                 ServerSocket server = new ServerSocket(1888);
-                Socket socket = server.accept();
+                Socket socket = null;
+                while(true) {
+                    socket = server.accept();
+                    System.out.println("socket客户端" + socket.getInetAddress() + "连接成功！！！");
 
-                int a = 0;
-
-                // 初始化输出流
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-
-                // 从socket获取数据
-                InputStream is = socket.getInputStream();
-                DataInputStream dis = new DataInputStream(is);
-                //System.out.println("client_msg:"+dis.readUTF());
-
-                while(true){
-                    // 打印客户端发送的数据
-                    String abc = dis.readUTF();
-                    System.out.println("client_msg:"+abc);
-                    System.out.println("-----------------------");
-
-                    if (abc.equals("close")) {
-
-                        break;
-                    }
-
-//                    Thread.sleep(1000);
-//                    // 向客户端输出数据
-//                    out.writeUTF(getRandomStr());
-//                    out.flush();
+                    // 因为更新进度service无法区分哪个线程的socket，所以赋值给全局的socket
+                    new SocketServiceImpl().initSocketServer(socket);
                 }
-                out.close();
-                dis.close();
-                socket.close();
-                System.out.println("socket成功关闭！！！");
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        private static String getRandomStr(){
-            String str = "";
-            int ID = (int) (Math.random()*30);
-            int x = (int) (Math.random()*200);
-            int y = (int) (Math.random()*300);
-            int z = (int) (Math.random()*10);
-            str = "ID:"+ID+"/x:"+x+"/y:"+y+"/z:"+z;
-            return str;
-        }
     }
 
     static class Client extends Thread {
         public void run() {
 
-            try{
-
+            try {
                 // 连接socket服务器
-                Socket socket = new Socket("localhost",1083);
+                Socket socket = new Socket("localhost", 1888);
+                InputStream is = socket.getInputStream();
+                DataInputStream dis = new DataInputStream(is);
 
-                // 初始化输出流
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                while (true) {
+                    String msg = dis.readUTF();
 
-                while(true){
-                    // 先发送数据请求
-                    out.writeUTF("gei dian bai");
-
-                    // 从socket获取数据
-                    InputStream is = socket.getInputStream();
-                    DataInputStream dis  = new DataInputStream(is);
-                    System.out.println("server_msg:"+dis.readUTF());
+                    if (msg.equals("close")) {
+                        System.out.println("客户端socket即将关闭！！！");
+                        break;
+                    }
+                    System.out.println("server_msg:"+msg);
+                    System.out.println("+++++++++++");
                 }
-            }catch(Exception e){
+                is.close();
+                dis.close();
+                socket.close();
+            } catch(Exception e) {
                 e.printStackTrace();
             }
         }

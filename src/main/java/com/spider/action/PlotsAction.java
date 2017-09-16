@@ -1,8 +1,10 @@
 package com.spider.action;
 
+import com.spider.Main;
 import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.impl.houses.PlotsServiceImpl;
+import com.spider.service.impl.system.SocketServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.service.impl.system.SqlServiceImpl;
 
@@ -16,14 +18,12 @@ public class PlotsAction {
     SqlServiceImpl sqlService = new SqlServiceImpl();
     PlotsServiceImpl plotsService = new PlotsServiceImpl();
 
+
     /**
      * 同步单元楼的所有信息
      * syncAllList("中海国际社区B-2地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=c4d9a76b-b289-42b5-a65f-c99882645ff6")
      */
     public void syncAllList(String floorName, String floorDetailsUrl) {
-        // 1. 初始化同步socket
-        progressService.initProgressSocket();
-
 
         // 2. 循环调用service方法获取数据
         List<Plots> allPlotsList = new ArrayList<Plots>();
@@ -83,8 +83,7 @@ public class PlotsAction {
             }
         } while (number > 0);
 
-        // 3. 关闭同步socket
-        progressService.closeProgressSocket();
+        new SocketServiceImpl().closeSocketServer();
     }
 
 
