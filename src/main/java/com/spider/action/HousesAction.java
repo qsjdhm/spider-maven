@@ -5,6 +5,7 @@ import com.spider.entity.Houses;
 import com.spider.entity.Plots;
 import com.spider.service.impl.houses.FloorServiceImpl;
 import com.spider.service.impl.houses.HousesServiceImpl;
+import com.spider.service.impl.system.SocketServiceImpl;
 import com.spider.service.impl.system.SpiderProgressServiceImpl;
 import com.spider.service.impl.system.SqlServiceImpl;
 import com.spider.utils.SysConstant;
@@ -83,9 +84,9 @@ public class HousesAction {
                 }
             }
         } while (number > 0);
-        // 2. 在循环过程中socket通知管理平台同步进度（包括每页同步遇到的超时异常，供管理平台进一步操作）
-        // 3. 根据service抛出的超时异常、代码异常生成日志
-        // 4. 根据每页数据写入数据库
+
+        // 每次action结束，关闭socket
+        new SocketServiceImpl().closeSocketServer();
     }
 
     /**
@@ -129,6 +130,9 @@ public class HousesAction {
                 );
             }
             e.printStackTrace();
+        } finally {
+            // 每次action结束，关闭socket
+            new SocketServiceImpl().closeSocketServer();
         }
     }
 
@@ -177,6 +181,9 @@ public class HousesAction {
                 );
             }
             e.printStackTrace();
+        } finally {
+            // 每次action结束，关闭socket
+            new SocketServiceImpl().closeSocketServer();
         }
     }
 }

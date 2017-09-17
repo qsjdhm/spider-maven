@@ -1,16 +1,12 @@
 package com.spider.service.impl.system;
 
 
-
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Created by zhangyan on 2017/8/30.
+ * Created by zhangyan on 2017/9/16.
  * socket业务
  */
 public class SocketServiceImpl {

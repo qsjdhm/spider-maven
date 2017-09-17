@@ -17,6 +17,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.alibaba.fastjson.JSON;
+
 
 
 
@@ -31,19 +33,18 @@ public class Main {
         Thread.sleep(100);  // 调整时间，让服务端准备好
         new Client().start();
 
-
-
-        PlotsAction plotsAction = new PlotsAction();
-        plotsAction.syncListByPage("中海国际社区C-1地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=796f5efb-d8a8-490c-9235-13150582bfd8", 1);
-
-
-        System.out.println(":::::::::::::::::::::::::::::");
-        System.out.println(":::::::::::::::::::::::::::::");
-        System.out.println(":::::::::::::::::::::::::::::");
-
-        Thread.sleep(3000);  // 调整时间，让服务端准备好
-        new Client().start();
-        plotsAction.syncListByPage("中海国际社区C-1地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=796f5efb-d8a8-490c-9235-13150582bfd8", 1);
+//        PlotsAction plotsAction = new PlotsAction();
+//        plotsAction.syncListByPage("中海国际社区C-1地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=796f5efb-d8a8-490c-9235-13150582bfd8", 1);
+//
+//
+//        System.out.println(":::::::::::::::::::::::::::::");
+//        System.out.println(":::::::::::::::::::::::::::::");
+//        System.out.println(":::::::::::::::::::::::::::::");
+//
+//        Thread.sleep(3000);  // 调整时间，让服务端准备好
+//        new Client().start();
+//        Thread.sleep(1000);  // 调整时间，让服务端准备好
+//        plotsAction.syncListByPage("中海国际社区C-1地块", "http://www.jnfdc.gov.cn/onsaling/show.shtml?prjno=796f5efb-d8a8-490c-9235-13150582bfd8", 1);
 
 
 
@@ -52,8 +53,8 @@ public class Main {
         /**
          * 自动任务action调用实例
          */
-//        TaskAction taskAction = new TaskAction();
-//        taskAction.begin();
+        TaskAction taskAction = new TaskAction();
+        taskAction.begin();
 
 
 
@@ -114,7 +115,6 @@ public class Main {
 
     static class Client extends Thread {
         public void run() {
-
             try {
                 // 连接socket服务器
                 Socket socket = new Socket("localhost", 1888);
@@ -134,6 +134,7 @@ public class Main {
                 is.close();
                 dis.close();
                 socket.close();
+                System.out.println("客户端socket关闭成功！！！");
             } catch(Exception e) {
                 e.printStackTrace();
             }

@@ -1,7 +1,5 @@
 package com.spider.action;
 
-import com.spider.Main;
-import com.spider.entity.Floor;
 import com.spider.entity.Plots;
 import com.spider.service.impl.houses.PlotsServiceImpl;
 import com.spider.service.impl.system.SocketServiceImpl;
@@ -25,7 +23,7 @@ public class PlotsAction {
      */
     public void syncAllList(String floorName, String floorDetailsUrl) {
 
-        // 2. 循环调用service方法获取数据
+        // 1. 循环调用service方法获取数据
         List<Plots> allPlotsList = new ArrayList<Plots>();
         int number = 1;
         boolean isTimedOut = false;
@@ -83,6 +81,7 @@ public class PlotsAction {
             }
         } while (number > 0);
 
+        // 2. 每次action结束，关闭socket
         new SocketServiceImpl().closeSocketServer();
     }
 
@@ -123,6 +122,9 @@ public class PlotsAction {
                 );
             }
             e.printStackTrace();
+        } finally {
+            // 每次action结束，关闭socket
+            new SocketServiceImpl().closeSocketServer();
         }
     }
 
@@ -163,6 +165,9 @@ public class PlotsAction {
                 );
             }
             e.printStackTrace();
+        } finally {
+            // 每次action结束，关闭socket
+            new SocketServiceImpl().closeSocketServer();
         }
     }
 

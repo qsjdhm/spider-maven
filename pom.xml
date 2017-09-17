@@ -9,6 +9,13 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+        <!-- json解析 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.31</version>
+        </dependency>
+
         <!-- 抓数据 -->
         <dependency>
             <groupId>org.jsoup</groupId>

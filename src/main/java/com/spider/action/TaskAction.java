@@ -38,7 +38,7 @@ public class TaskAction {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);//每天
         //定制每天的16:00:00执行，
-        calendar.set(year, month, day, 16, 00, 00);
+        calendar.set(year, month, day, 15, 41, 00);
         Date date = calendar.getTime();
         Timer timer = new Timer();
 

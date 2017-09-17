@@ -1,16 +1,11 @@
 package com.spider.service.impl.system;
 
-import com.spider.Main;
-import com.spider.service.impl.houses.RebServiceImpl;
+import com.alibaba.fastjson.JSON;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.*;
 
 /**
@@ -24,8 +19,6 @@ public class SpiderProgressServiceImpl {
 
     // 当前进度列表
     private static List<Map<String, Object>> progressList = new ArrayList<Map<String, Object>>();
-
-
 
 
 
@@ -81,7 +74,7 @@ public class SpiderProgressServiceImpl {
         // 3. 应该把所有参数通过websocket通知前台
         System.out.println("----------");
         System.out.println(info);
-        new SocketServiceImpl().sendMsg(info);
+        new SocketServiceImpl().sendMsg(JSON.toJSONString(progress));
     }
 
     /**
